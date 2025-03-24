@@ -1,0 +1,217 @@
+.main-form {
+  font-size: 12px;
+  margin-top: 15px;
+  border: 2px solid black;
+  border: none;
+  width: 100%;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+}
+
+.main-form h1 {
+  margin-top: 5px;
+  margin-left: 400px;
+}
+
+.registering-buttons{
+  margin-left: 300px;
+  margin-top: 90px;
+  justify-content: space-between;
+  display: flex;
+}
+
+.main-form .form .schoolform .registering-buttons{
+  margin-left: 300px;
+  margin-top: 10px;
+  justify-content: space-between;
+  display: flex;
+}
+
+.registering-buttons button{
+  height: 30px;
+}
+
+.registering-buttons button .save{
+  background-color: #4CAF50;
+}
+
+
+fieldset {
+  border: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: 2%;
+}
+
+.form form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.form form section,
+.form form aside {
+  width: 50%;
+  height: 100%;
+}
+
+.form form section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.form form section fieldset {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.form form section fieldset span {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.form form section fieldset span label {
+  font-size: 13px;
+  text-transform: capitalize;
+  font-size: sans-serif;
+  font-weight: normal;
+}
+
+.form form section fieldset span input {
+  width: 50%;
+  height: 25px;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  margin-bottom: 10px;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}
+
+.form form section span select {
+  padding: 0px 10px;
+  margin: 0px;
+  font-family: sans-serif;
+  font-size: 12px;
+  margin-bottom: 10px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+  text-align: center;
+}
+
+
+
+.form form aside select {
+  padding: 0px 10px;
+  margin: 0px;
+  font-family: sans-serif;
+  font-size: 12px;
+  outline: none;
+  color: rgb(71, 71, 71);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.form form section fieldset span:last-child {
+  padding: 0px;
+  width: 100%;
+}
+
+
+.form form aside {
+  display: flex;
+}
+
+.form form aside fieldset {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.form form aside fieldset span {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form form aside fieldset span label {
+  font-size: 13px;
+  text-transform: capitalize;
+  font-size: sans-serif;
+  font-weight: normal;
+}
+
+.form form aside fieldset span input,
+.form form aside fieldset span select {
+  width: 50%;
+  height: 10px !important;
+}
+
+select {
+  height: 30px;
+}
+
+.form form aside fieldset fieldset {
+  width: unset;
+  height: unset;
+}
+
+.form form aside fieldset fieldset legend{
+  margin-left: -10px;
+}
+.form form aside fieldset fieldset legend label{
+  margin-left: -10px;
+}
+
+.form form aside fieldset span input {
+  width: 50%;
+  height: 25px !important;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  font-size: 12px;
+  outline: none;
+  margin-bottom: 10px;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}
+
+.form form aside fieldset span textarea{
+  outline: none;
+}
+
+.form form section fieldset span textarea{
+  outline: none;
+}
+
+.form form aside fieldset legend{
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.form form section fieldset legend{
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+}

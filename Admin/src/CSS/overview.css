@@ -1,0 +1,149 @@
+table{
+  width: 100%;
+  text-align: left;
+  overflow-y: scroll;
+  border-bottom: 2px solid black;
+}
+
+th, td{
+  background-color: white;
+  padding-bottom: 0;
+}
+th {
+  position: sticky;
+  top: 0;
+  background: #f1f1f1;  
+  z-index: 10;
+  height: 40px;
+  border-bottom: 2px solid #ccc;
+}
+td{
+  height: 50px;
+  padding-bottom: -15px;
+  font-family: Arial;
+  vertical-align: bottom;
+  padding-bottom: 5px;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+table, td { 
+  border-bottom: 1px solid rgb(226, 226, 226);
+  border-collapse: collapse; 
+}
+
+.read{
+  padding: 2px 4px;
+  font-size: 0.875rem;
+  font-weight: 600; 
+  background-color: #ef4444;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.read:hover {
+  background-color: #dc2626;
+}
+.update{
+  padding: 2px 4px;
+  font-size: 0.875rem;
+  font-weight: 600; 
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.update:hover {
+  background-color: #0056b3; 
+}
+
+.dropdown{
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content{
+  display: none;
+  position: absolute;
+  background-color: white;
+  max-width: 90px;
+  border-radius: 5px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown button{
+  padding: 3px 6px;  
+  font-size: 14px;   
+  font-weight: 600;  
+  color: white;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 5px; 
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.dropdown-content .custom-link{
+  display: inline-block;
+  padding: 5px;
+  width: 80px;
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-content .custom-link:hover{
+  background-color: #ddd;
+  width: 80px;
+  border-radius: 5px;
+}
+
+.dropdown:hover .dropdown-content{
+  display: inline-block;
+}
+
+.delete {
+  display: inline-block;
+  padding: 3px 6px; 
+  font-size: 14px; 
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  border-radius: 5px; 
+  background-color: #dc3545; 
+  color: #fff; 
+}
+
+.delete:hover {
+  background-color: #c82333; 
+}
+
+.delete:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);
+}
+
+.delete:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.para{
+  margin-top: 2px;
+  margin-bottom: 1px;
+  font-size: 25px;
+  text-transform: uppercase;
+  margin-left: 450px;
+  font-weight: bold;
+}

@@ -1,0 +1,89 @@
+label{
+  display: block;
+  color: black;
+  font-size: 13px;
+  outline: none;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+textarea,
+select,
+.submit{
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.checking{
+  background-color: white;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #d2d2d3;
+  box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+  height: 75%;
+  width: 70%;
+  margin-left: 155px;
+  margin-top: 50px;
+  padding-left: 80px;
+  color: black;
+}
+
+h1{
+  margin-left: 180px;
+} 
+
+ button{
+  margin-bottom: 0;
+ }
+
+ .form-group{
+  display: flex;
+  justify-content: space-between;
+ }
+
+  .form-group input{
+  height: 10px;
+  margin-right: 50px;
+  outline: none;
+ }
+
+  .checking form{
+  display: inline-block;
+  align-items: center;
+  margin-left: 50px;
+}
+
+.checking form span{
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 450px;
+}
+
+.checking form button{
+  height: 25px;
+  margin-left: 390px;
+  border-radius: 5px;
+}
+
+.checking button:hover{
+  cursor: pointer;
+}
+
+.checking form input{
+  height: 25px;
+  width: 50%;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  margin-bottom: 10px;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}

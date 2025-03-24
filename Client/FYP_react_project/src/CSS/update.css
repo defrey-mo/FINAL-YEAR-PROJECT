@@ -1,0 +1,243 @@
+.updating-page{
+  display: flex;
+  gap: 5px;
+  margin-left: 50px;
+
+}
+.updating-buttons{
+  width: 100px;
+  display: inline-block;
+}
+
+.updating-buttons .button{
+  margin-bottom: 30px;
+  cursor: pointer;
+  width: 100px;
+  height: 20px;
+  background-color: azure;
+  border: none;
+  border-radius: 5px;
+  display: block;
+  color: black;
+  padding-left: 2px;
+  font-family: sans-serif;
+}
+
+.updating-buttons .button{
+  margin-top: 30px;
+}
+
+.updating-buttons .button:hover{
+  background-color: rgb(57, 158, 158);
+}
+
+.updating-page .updating-form{
+  box-sizing: border-box;
+  background-color: white;
+  box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+  width: 950px;
+  height: 530px;
+}
+
+
+.updating-form h2{
+  margin-top: 10px;
+  margin-left: 350px;
+  position: sticky;
+  top: 0;
+}
+
+.updating-form p{
+  font-weight: bold;
+  font-size: 24px;
+  margin-left: 250px;
+}
+
+.update-form span input{
+  height: 5px;
+  width: 250px;
+}
+
+.update-form span{
+  display: flex;
+  gap: 50px;
+  align-items: center;
+}
+
+/* .updating-form .form{
+  display: flex;
+  flex-direction: row;
+} */
+
+
+/* .updating-form .form .section{
+  width: 475px;
+  margin-top: -35px;
+} */
+
+.updating-form .form form span{
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 450px;
+}
+
+.updating-form .form form legend{
+  font-weight: bold;
+}
+
+/* .section{
+  display: inline-block;
+} */
+
+.updating-form .form .section form fieldset span input{
+  height: 25px;
+  width: 50%;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  margin-bottom: 10px;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}
+
+/* .updating-form .form .aside{
+  background-color: white;
+  width: 475px;
+  height: 470px;
+  margin-top: -35px;
+} */
+
+/* .updating-form .form .aside fieldset legend{
+  color: black;
+} */
+
+/* .updating-form .form .aside form fieldset span input{
+  height: 25px;
+  width: 50%;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+} */
+
+/* .updating-form .form .aside form fieldset span textarea{
+  outline: none;
+} */
+
+.updating-form .form .section form span textarea{
+  outline: none;
+}
+
+.updating-form .form .conduct-form form{
+  display: inline-block;
+  align-items: center;
+}
+
+.updating-form .form .conduct-form form select{
+  padding: 0;
+  height: 25px;
+  width: 50%;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}
+
+.updating-form .form .conduct-form form button{
+  margin-left: 385px;
+  cursor: pointer;
+  height: 35px;
+  border-radius: 5px;
+}
+
+.updating-form .form .conduct-form form button:hover{
+  background-color: rgb(206, 204, 204);
+}
+
+.updating-form .form .conduct-form form input {
+  padding: 0;
+  height: 25px;
+  width: 50%;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  margin-bottom: 10px;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}
+
+.updating-form .form .conduct-form form select{
+  margin-bottom: 10px;
+  width: 500px;
+}
+
+.updating-form .form .conduct-form form textarea{
+  margin-bottom: 10px;
+  font-size: 12px;
+  outline: none;
+  font-family: sans-serif;
+}
+
+.updating-form .form .status-form form{
+  display: inline-block;
+  align-items: center;
+}
+
+.updating-form .form .status-form form{
+  display: inline-block;
+  align-items: center;
+}
+
+.updating-form .form .status-form form select{
+  padding: 0;
+  height: 25px;
+  width: 50%;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}
+
+.updating-form .form .status-form form input{
+  padding: 0;
+  height: 25px;
+  width: 50%;
+  padding: 0px 10px;
+  font-family: sans-serif;
+  margin-bottom: 10px;
+  font-size: 12px;
+  outline: none;
+  width: 50% !important;
+  border-radius: 5px;
+  color: rgb(71, 71, 71);
+}
+
+.updating-form .form .status-form form select{
+  margin-bottom: 10px;
+}
+
+.updating-form .form .status-form form button{
+  margin-left: 385px;
+  cursor: pointer;
+  height: 35px;
+  border-radius: 5px;
+}
+
+.updating-form .form .status-form form button:hover{
+  background-color: rgb(206, 204, 204);
+}
+

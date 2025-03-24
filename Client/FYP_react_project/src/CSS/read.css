@@ -1,0 +1,19 @@
+.reading-students{
+box-sizing: border-box;
+background-color: white;
+box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+width: 800px;
+margin-left: 150px;
+margin-top: 0;
+height: 570px;
+overflow-y: scroll;
+}
+
+.reading-students h2{
+  position: sticky;
+  margin-left: 300px;
+  margin-top: 10px;
+  top: 0;
+  z-index: 10;
+  height: 40px;
+}
