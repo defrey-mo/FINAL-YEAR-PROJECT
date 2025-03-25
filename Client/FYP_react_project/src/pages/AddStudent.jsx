@@ -5,81 +5,110 @@ import "../CSS/add.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export default function AddStudent({  setActivePage }) {
-  setActivePage("add-student");
+export default function AddStudent({ setActivePage }) {
+    setActivePage("add-student");
 
-  const randNum = Math.floor(Math.random() * 100000);
+    const [student_id, setstudent_id] = useState("");
+    const [firstname, setfirstname] = useState("");
+    const [middlename, setmiddlename] = useState("");
+    const [surname, setsurname] = useState("");
+    const [guardian_email, setguardian_email] = useState("");
+    const [guardian_fullnames, setguardian_fullnames] = useState("");
+    const [medical_info, setmedical_info] = useState("");
+    const [gender, setgender] = useState("male");
+    const [dob, setdob] = useState("");
+    const [guardian_phone, setguardian_phone] = useState("");
+    const [home_address, sethome_address] = useState("");
+    const [prev_school, setprev_school] = useState("");
+    const [existingStudentIds, setExistingStudentIds] = useState([]);
+    const [loading, setLoading] = useState(true); // Add a loading state
 
-  const [student_id, setstudent_id] = useState("STU-" + randNum);
-  const [firstname, setfirstname] = useState("");
-  const [middlename, setmiddlename] = useState("");
-  const [surname, setsurname] = useState("");
-  const [guardian_email, setguardian_email] = useState("");
-  const [guardian_fullnames, setguardian_fullnames] = useState("");
-  const [medical_info, setmedical_info] = useState("");
-  const [gender, setgender] = useState("male");
-  const [dob, setdob] = useState("");
-  const [guardian_phone, setguardian_phone] = useState("");
-  const [home_address, sethome_address] = useState("");
-  const [prev_school, setprev_school] = useState("");
+    const navigate = useNavigate();
 
-  /*  {
+    useEffect(() => {
+        // Fetch existing student IDs from the backend
+        axios.get('http://localhost:8084/students/ids') // Assuming you have an endpoint to fetch student IDs
+            .then(res => {
+                setExistingStudentIds(res.data);
+                generateUniqueStudentId(res.data);
+                setLoading(false); // Set loading to false after data is fetched
+            })
+            .catch(err => {
+                console.error("Error fetching student IDs:", err);
+                setLoading(false); // Set loading to false even on error to prevent infinite loading
+            });
+    }, []);
 
-} */
+    const generateUniqueStudentId = (existingIds) => {
+        let newId;
+        let isUnique = false;
 
-  function clearBtn(e) {
-    e.preventDefault();
+        while (!isUnique) {
+            const randNum = Math.floor(Math.random() * 100000);
+            newId = "STU-" + randNum;
+            if (!existingIds.includes(newId)) {
+                isUnique = true;
+            }
+        }
+        setstudent_id(newId);
+    };
 
-    //setreg_no("");
-    setfirstname("");
-    setmiddlename("");
-    setsurname("");
-    setguardian_email("");
-    setguardian_fullnames("");
-    setmedical_info("");
-    setgender("");
-    setdob("");
-    setguardian_phone("");
-    sethome_address("");
-    setprev_school("");
-  }
-  const content = {
-    "student_id": student_id,
-    "firstname": firstname,
-    "middlename": middlename,
-    "surname": surname,
-    "dob": dob,
-    "gender": gender,
-    "medical_info": medical_info,
-    "guardian_fullnames": guardian_fullnames,
-    "guardian_phone": guardian_phone,
-    "guardian_email": guardian_email,
-    "home_address": home_address,
-    "prev_school": prev_school,
-  }
+    function clearBtn(e) {
+        e.preventDefault();
+        setfirstname("");
+        setmiddlename("");
+        setsurname("");
+        setguardian_email("");
+        setguardian_fullnames("");
+        setmedical_info("");
+        setgender("");
+        setdob("");
+        setguardian_phone("");
+        sethome_address("");
+        setprev_school("");
+    }
 
-  const requestConfig = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url:'http://localhost:8084/students',
-    headers:{
-      "content-type":"application/json",
-      accept:"application/json"
-    },
-    data: content
-  }
+    const content = {
+        "student_id": student_id,
+        "firstname": firstname,
+        "middlename": middlename,
+        "surname": surname,
+        "dob": dob,
+        "gender": gender,
+        "medical_info": medical_info,
+        "guardian_fullnames": guardian_fullnames,
+        "guardian_phone": guardian_phone,
+        "guardian_email": guardian_email,
+        "home_address": home_address,
+        "prev_school": prev_school,
+    };
 
-  const navigate = useNavigate();
+    const requestConfig = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: 'http://localhost:8084/students',
+        headers: {
+            "content-type": "application/json",
+            accept: "application/json"
+        },
+        data: content
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.request(requestConfig)
-      .then(res => {
-        console.log(res);
-        navigate('/system/overview')
-      })  
-      .catch(err => console.log(err));
-  };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios.request(requestConfig)
+            .then(res => {
+                console.log(res);
+                navigate('/system/overview');
+            })
+            .catch(err => console.log(err));
+    };
+
+    if (loading) {
+        return <div>Loading...</div>; // Renders a loading indicator while fetching data
+    }
+
+
   
   return (
     <>
@@ -94,13 +123,13 @@ export default function AddStudent({  setActivePage }) {
                 <span>
                   <label>Student Number</label>
                   <input
-                    disabled
                     onChange={(e) => setstudent_id(e.target.value)}
                     value={student_id}
                     type="text"
                     name="student-id"
                     id="student-id"
                     required
+                    readOnly
                   />
                 </span>
 
@@ -182,10 +211,6 @@ export default function AddStudent({  setActivePage }) {
                   </fieldset>
                 </span>
               </fieldset>
-
-              {/* <fieldset>
-                <legend>Medical Information</legend>
-              </fieldset> */}
             </section>
 
             <aside>
@@ -202,16 +227,6 @@ export default function AddStudent({  setActivePage }) {
                     required
                   />
                 </span>
-                {/* <span>
-                  <label for="emergency-phone">Last Name</label>
-                  <input
-                  
-                    type="text"
-                    name="emergency-phone"
-                    id="emergency-phone"
-                    required
-                  />
-                </span> */}
                 <span>
                   <label>Phone Number</label>
                   <input

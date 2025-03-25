@@ -1,6 +1,7 @@
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
+import bcrypt from "bcrypt";
 
 const app = express();
 app.use(cors());
@@ -31,30 +32,68 @@ app.post("/schools", (req, res) => {
   });
 });
 
-app.post("/staffs", (req, res) => {
-  const sql =
-    "INSERT INTO staff VALUE (" +
-    `'${req.body.staff_id}',
-    '${req.body.firstname}',
-    '${req.body.middlename}',
-    '${req.body.surname}',
-    '${req.body.nationality}',
-    '${req.body.gender}',
-    '${req.body.phone}',
-    '${req.body.email}',
-    '${req.body.home_address}',
-    '${req.body.emergency_name}',
-    '${req.body.emergency_phone}',
-    '${req.body.emergency_email}',
-    '${req.body.emergency_address}',
-    '${req.body.username}',
-    '${req.body.password}',
-    '${req.body.role}'
-  );`;
-  db.query(sql, (err, result) => {
-    if (err) return res.json(err);
-    return res.json(result);
-  });
+app.post("/staffs", async (req, res) => {
+  try {
+    const {
+      staff_id,
+      firstname,
+      middlename,
+      surname,
+      nationality,
+      gender,
+      phone,
+      email,
+      home_address,
+      emergency_name,
+      emergency_phone,
+      emergency_email,
+      emergency_address,
+      username,
+      password, // Ensure the request includes a password
+      role,
+    } = req.body;
+
+    // Hash the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // SQL query with placeholders
+    const sql = `
+      INSERT INTO staff (
+        staff_id, firstname, middlename, surname, nationality, gender, phone, email, home_address,
+        emergency_name, emergency_phone, emergency_email, emergency_address, username, password, role
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    // Execute query
+    db.query(
+      sql,
+      [
+        staff_id,
+        firstname,
+        middlename,
+        surname,
+        nationality,
+        gender,
+        phone,
+        email,
+        home_address,
+        emergency_name,
+        emergency_phone,
+        emergency_email,
+        emergency_address,
+        username,
+        hashedPassword, // Store the hashed password
+        role,
+      ],
+      (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        return res.json({ message: "Staff added successfully", result });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 
@@ -77,25 +116,56 @@ app.get("/", (req, res) => {
 
 // registering students api
 app.post("/students", (req, res) => {
-  const sql =
-    "INSERT INTO students VALUE (" +
-    `'${req.body.student_id}',
-    '${req.body.firstname}',
-    '${req.body.middlename}',
-    '${req.body.surname}',
-    '${req.body.dob}',
-    '${req.body.gender}',
-    '${req.body.medical_info}',
-    '${req.body.guardian_fullnames}',
-    '${req.body.guardian_phone}',
-    '${req.body.guardian_email}',
-    '${req.body.home_address}',
-    '${req.body.prev_school}'
-  );`;
-  db.query(sql, (err, result) => {
-    if (err) return res.json(err);
-    return res.json(result);
-  });
+  const {
+    student_id,
+    firstname,
+    middlename,
+    surname,
+    dob,
+    gender,
+    medical_info,
+    guardian_fullnames,
+    guardian_phone,
+    guardian_email,
+    home_address,
+    prev_school
+  } = req.body;
+
+  // Ensures required fields are present
+  if (!student_id || !firstname || !surname || !dob || !gender) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  // SQL query with placeholders
+  const sql = `
+    INSERT INTO students (
+      student_id, firstname, middlename, surname, dob, gender, medical_info,
+      guardian_fullnames, guardian_phone, guardian_email, home_address, prev_school
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  // Execute query safely with parameterized inputs
+  db.query(
+    sql,
+    [
+      student_id,
+      firstname,
+      middlename,
+      surname,
+      dob,
+      gender,
+      medical_info,
+      guardian_fullnames,
+      guardian_phone,
+      guardian_email,
+      home_address,
+      prev_school
+    ],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      return res.json({ message: "Student added successfully", result });
+    }
+  );
 });
 
 app.post("/conduct", (req, res) => {
@@ -185,4 +255,18 @@ app.put("/update/:id", (req, res) => {
 
 app.listen(8084, () => {
   console.log("The server is working");
+});
+
+
+// api endpoint for fetching ids
+app.get('/students/ids', (req, res) => {
+  const sql = "SELECT student_id FROM students";
+  db.query(sql, (err, results) => {
+      if (err) {
+          console.error("Database error:", err);
+          return res.status(500).json({ error: "Database error" });
+      }
+      const ids = results.map(result => result.student_id);
+      res.json(ids);
+  });
 });

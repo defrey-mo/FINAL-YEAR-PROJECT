@@ -79,7 +79,7 @@ export default function CheckStudent({ setActivePage }) {
               <fieldset>
                 <legend>Personal Information</legend>
                 <span>
-                  <label>School ID</label>
+                  <label>Staff ID</label>
                   <input
                     onChange={(e) => setstaff_id(e.target.value)}
                     value={staff_id}
@@ -168,7 +168,7 @@ export default function CheckStudent({ setActivePage }) {
                     <input
                       onChange={(e) => setpassword(e.target.value)}
                       value={password}
-                      type="text"
+                      type="password"
                       name="emergency-name"
                       id="emergency-name"
                     />
