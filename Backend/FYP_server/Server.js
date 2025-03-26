@@ -2,16 +2,17 @@ import express from "express";
 import mysql from "mysql";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "final_year_projectdb",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 app.post("/schools", (req, res) => {
@@ -49,15 +50,25 @@ app.post("/staffs", async (req, res) => {
       emergency_email,
       emergency_address,
       username,
-      password, // Ensure the request includes a password
+      password,
       role,
     } = req.body;
 
-    // Hash the password
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+
+    // ✅ Check if username already exists
+    const [existingUser] = await db.query("SELECT * FROM staff WHERE username = ?", [username]);
+    if (existingUser.length > 0) {
+      return res.status(409).json({ message: "Username already taken" });
+    }
+
+    // ✅ Hash the password securely
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // SQL query with placeholders
+    // ✅ Use async/await instead of callback for db.query
     const sql = `
       INSERT INTO staff (
         staff_id, firstname, middlename, surname, nationality, gender, phone, email, home_address,
@@ -65,35 +76,71 @@ app.post("/staffs", async (req, res) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    // Execute query
-    db.query(
-      sql,
-      [
-        staff_id,
-        firstname,
-        middlename,
-        surname,
-        nationality,
-        gender,
-        phone,
-        email,
-        home_address,
-        emergency_name,
-        emergency_phone,
-        emergency_email,
-        emergency_address,
-        username,
-        hashedPassword, // Store the hashed password
-        role,
-      ],
-      (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        return res.json({ message: "Staff added successfully", result });
-      }
-    );
+    const [result] = await db.query(sql, [
+      staff_id,
+      firstname,
+      middlename,
+      surname,
+      nationality,
+      gender,
+      phone,
+      email,
+      home_address,
+      emergency_name,
+      emergency_phone,
+      emergency_email,
+      emergency_address,
+      username,
+      hashedPassword, // ✅ Store the hashed password
+      role,
+    ]);
+
+    return res.status(201).json({ message: "Staff added successfully", staffId: result.insertId });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Registration error:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
+});
+
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
+  }
+
+  const sql = "SELECT * FROM staff WHERE username = ?";
+
+  db.query(sql, [username], async (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Database error", error: err.message });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    const user = results[0];
+
+    try {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Wrong password" });
+      }
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { staff_id: user.staff_id, username: user.username, role: user.role },
+        process.env.JWT_KEY,
+        { expiresIn: "2h" }
+      );
+
+      return res.status(200).json({ message: "Login successful", token });
+    } catch (error) {
+      return res.status(500).json({ message: "Error during login", error: error.message });
+    }
+  });
 });
 
 
@@ -135,16 +182,12 @@ app.post("/students", (req, res) => {
   if (!student_id || !firstname || !surname || !dob || !gender) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-
-  // SQL query with placeholders
   const sql = `
     INSERT INTO students (
       student_id, firstname, middlename, surname, dob, gender, medical_info,
       guardian_fullnames, guardian_phone, guardian_email, home_address, prev_school
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-
-  // Execute query safely with parameterized inputs
   db.query(
     sql,
     [
@@ -252,12 +295,6 @@ app.put("/update/:id", (req, res) => {
   })
 })
 
-
-app.listen(8084, () => {
-  console.log("The server is working");
-});
-
-
 // api endpoint for fetching ids
 app.get('/students/ids', (req, res) => {
   const sql = "SELECT student_id FROM students";
@@ -269,4 +306,8 @@ app.get('/students/ids', (req, res) => {
       const ids = results.map(result => result.student_id);
       res.json(ids);
   });
+});
+
+app.listen(8084, () => {
+  console.log("The server is working");
 });

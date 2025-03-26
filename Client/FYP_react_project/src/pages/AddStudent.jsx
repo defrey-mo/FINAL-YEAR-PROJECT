@@ -26,8 +26,8 @@ export default function AddStudent({ setActivePage }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch existing student IDs from the backend
-        axios.get('http://localhost:8084/students/ids') // Assuming you have an endpoint to fetch student IDs
+        // Fetching existing student IDs from the backend
+        axios.get('http://localhost:8084/students/ids') // An endpoint to fetch student IDs
             .then(res => {
                 setExistingStudentIds(res.data);
                 generateUniqueStudentId(res.data);

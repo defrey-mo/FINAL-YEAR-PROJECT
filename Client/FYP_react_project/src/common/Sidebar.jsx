@@ -9,7 +9,11 @@ export default function Sidebar({activePage}) {
   const navigate = useNavigate()
 
   function logoutFunc(){
-    navigate('/login')
+        // Removes the token from localStorage
+        localStorage.removeItem('token');
+    
+        // Redirects you to login page
+        navigate('/login');
   }
 
   return (
