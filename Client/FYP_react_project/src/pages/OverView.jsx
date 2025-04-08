@@ -7,12 +7,34 @@ import { Link } from "react-router-dom";
 
 export default function OverView({ students, fetchStudents, setActivePage }) {
   setActivePage("overview");
-    const [data, setData] = useState ([])
+  
+  const [data, setData] = useState([]);
+
+  // Fetch students only for the logged-in user's school
   useEffect(() => {
-    axios.get('http://localhost:8084/')
-    .then(res => setData(res.data))
-    .catch(err => console.log(err));
-  }, [])
+    const token = localStorage.getItem("token"); // Get the JWT token from localStorage
+
+    if (!token) {
+      console.error("No token found! User not authenticated.");
+      return;
+    }
+
+    // Make a GET request to fetch students, passing the token in the Authorization header
+    axios
+      .get("http://localhost:8084/", {
+        headers: {
+          Authorization: `Bearer ${token}`, // Send the token for authentication
+        },
+      })
+      .then((res) => setData(res.data))  // On success, update the `data` state with students
+      .catch((err) => {
+        console.error("Error fetching students:", err);
+        if (err.response && err.response.status === 401) {
+          // Handle unauthorized access
+          alert("You are not authorized to view this data. Please log in.");
+        }
+      });
+  }, []);
 
   return (
     <div>
@@ -31,32 +53,47 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
           </tr>
         </thead>
         <tbody>
-          
-            {data.map((students, index) =>{
-            return  <tr key={index}>
-            <td>{students.student_id}</td>
-            <td>{students.firstname}</td>
-            <td>{students.middlename}</td>
-            <td>{students.surname}</td>
-            <td>{students.guardian_fullnames}</td>
-            <td style={{textTransform:"none"}}>{students.guardian_email}</td>
-            <td>{students.guardian_phone}</td>
-            <td>
-              <Link to={`/system/read/${students.student_id}`} className='read'>Read</Link>
-              <div className="dropdown">
-                <button>Update</button>
-                <div className="dropdown-content">
-                <Link to={`/system/update/${students.student_id}`} className="custom-link">Metadata</Link>
-                <Link to={`/system/conduct/${students.student_id}`} className="custom-link">Conduct</Link>
-                <Link to={`/system/status/${students.student_id}`} className="custom-link">Status</Link>
-                </div>
-              </div>
-              <button className="delete">Delete</button>
-            </td>
-          </tr>}
-          
-            )}
-        
+          {data.length > 0 ? (
+            data.map((students, index) => {
+              return (
+                <tr key={index}>
+                  <td>{students.student_id}</td>
+                  <td>{students.firstname}</td>
+                  <td>{students.middlename}</td>
+                  <td>{students.surname}</td>
+                  <td>{students.guardian_fullnames}</td>
+                  <td style={{ textTransform: "none" }}>
+                    {students.guardian_email}
+                  </td>
+                  <td>{students.guardian_phone}</td>
+                  <td>
+                    <Link to={`/system/read/${students.student_id}`} className="read">
+                      Read
+                    </Link>
+                    <div className="dropdown">
+                      <button>Update</button>
+                      <div className="dropdown-content">
+                        <Link to={`/system/update/${students.student_id}`} className="custom-link">
+                          Metadata
+                        </Link>
+                        <Link to={`/system/conduct/${students.student_id}`} className="custom-link">
+                          Conduct
+                        </Link>
+                        <Link to={`/system/status/${students.student_id}`} className="custom-link">
+                          Status
+                        </Link>
+                      </div>
+                    </div>
+                    <button className="delete">Delete</button>
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="8">No students found for your school.</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

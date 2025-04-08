@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../CSS/check.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +17,7 @@ export default function CheckStudent({ setActivePage }) {
     const [surname, setsurname] = useState("");
     const [nationality, setnationality] = useState("");
     const [gender, setgender] = useState("Male");
+    const [school_id, setschool_id] = useState("");
     const [phone, setphone] = useState("");
     const [email, setemail] = useState("");
     const [home_address, sethome_address] = useState("");
@@ -27,6 +28,7 @@ export default function CheckStudent({ setActivePage }) {
     const [username, setusername] = useState("");
     const [password, setpassword] = useState("");
     const [role, setrole] = useState("Admin");
+    const [schools, setSchools] = useState([]);
     
     const consist = {
       "staff_id": staff_id,
@@ -35,6 +37,7 @@ export default function CheckStudent({ setActivePage }) {
       "surname": surname,
       "nationality": nationality,
       "gender": gender,
+      "school_id": school_id,
       "phone": phone,
       "email": email,
       "home_address": home_address,
@@ -56,6 +59,14 @@ export default function CheckStudent({ setActivePage }) {
       },
       data: consist
     }
+
+    useEffect(() => {
+      axios.get("http://localhost:8084/school")
+        .then(response => {
+          setSchools(response.data);
+        })
+        .catch(error => console.error("Error fetching school IDs:", error));
+    }, []);
 
     const navigate = useNavigate();
 
@@ -147,6 +158,15 @@ export default function CheckStudent({ setActivePage }) {
                   >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
+                  </select>
+                </span>
+                <span>
+                  <label>School ID</label>
+                  <select onChange={(e) => setschool_id(e.target.value)} value={school_id} required>
+                    <option value="">Select a School</option>
+                    {schools.map((school) => (
+                      <option key={school.school_id} value={school.school_id}>{school.school_id}</option>
+                    ))}
                   </select>
                 </span>
 

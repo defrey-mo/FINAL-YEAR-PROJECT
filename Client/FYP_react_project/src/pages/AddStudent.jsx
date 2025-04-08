@@ -1,13 +1,14 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import "../CSS/add.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { decode } from 'js-base64'; // Import the decode function from js-base64 library
 
 export default function AddStudent({ setActivePage }) {
     setActivePage("add-student");
 
+    // State variables to store form input values
     const [student_id, setstudent_id] = useState("");
     const [firstname, setfirstname] = useState("");
     const [middlename, setmiddlename] = useState("");
@@ -21,40 +22,44 @@ export default function AddStudent({ setActivePage }) {
     const [home_address, sethome_address] = useState("");
     const [prev_school, setprev_school] = useState("");
     const [existingStudentIds, setExistingStudentIds] = useState([]);
-    const [loading, setLoading] = useState(true); // Add a loading state
+    const [loading, setLoading] = useState(true); // State to manage loading state
 
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Hook to navigate between routes
 
     useEffect(() => {
-        // Fetching existing student IDs from the backend
-        axios.get('http://localhost:8084/students/ids') // An endpoint to fetch student IDs
-            .then(res => {
-                setExistingStudentIds(res.data);
-                generateUniqueStudentId(res.data);
+        // Fetching existing student IDs from the backend when component mounts
+        axios
+            .get("http://localhost:8084/students/ids") // API endpoint to get student IDs
+            .then((res) => {
+                setExistingStudentIds(res.data); // Update state with fetched IDs
+                generateUniqueStudentId(res.data); // Generate a unique student ID
                 setLoading(false); // Set loading to false after data is fetched
             })
-            .catch(err => {
+            .catch((err) => {
                 console.error("Error fetching student IDs:", err);
-                setLoading(false); // Set loading to false even on error to prevent infinite loading
+                setLoading(false); // Set loading to false even if there's an error
             });
-    }, []);
+    }, []); // Empty dependency array means this effect runs only once
 
     const generateUniqueStudentId = (existingIds) => {
+        // Function to generate a unique student ID
         let newId;
         let isUnique = false;
 
         while (!isUnique) {
-            const randNum = Math.floor(Math.random() * 100000);
-            newId = "STU-" + randNum;
+            const randNum = Math.floor(Math.random() * 100000); // Generate a random number
+            newId = "STU-" + randNum; // Create a student ID string
             if (!existingIds.includes(newId)) {
+                // Check if the generated ID is unique
                 isUnique = true;
             }
         }
-        setstudent_id(newId);
+        setstudent_id(newId); // Set the generated ID to the state
     };
 
     function clearBtn(e) {
-        e.preventDefault();
+        // Function to clear form input fields
+        e.preventDefault(); // Prevent default form submission
         setfirstname("");
         setmiddlename("");
         setsurname("");
@@ -69,47 +74,78 @@ export default function AddStudent({ setActivePage }) {
     }
 
     const content = {
-        "student_id": student_id,
-        "firstname": firstname,
-        "middlename": middlename,
-        "surname": surname,
-        "dob": dob,
-        "gender": gender,
-        "medical_info": medical_info,
-        "guardian_fullnames": guardian_fullnames,
-        "guardian_phone": guardian_phone,
-        "guardian_email": guardian_email,
-        "home_address": home_address,
-        "prev_school": prev_school,
+        // Object containing form data
+        student_id,
+        firstname,
+        middlename,
+        surname,
+        dob,
+        gender,
+        medical_info,
+        guardian_fullnames,
+        guardian_phone,
+        guardian_email,
+        home_address,
+        prev_school,
+        school_id: localStorage.getItem("school_id"), // Get school ID from local storage
     };
 
     const requestConfig = {
+        // Configuration for the axios POST request
         method: "post",
         maxBodyLength: Infinity,
-        url: 'http://localhost:8084/students',
+        url: "http://localhost:8084/students", // API endpoint to register new student
         headers: {
             "content-type": "application/json",
-            accept: "application/json"
+            accept: "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach JWT token
         },
-        data: content
+        data: content,
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        axios.request(requestConfig)
-            .then(res => {
-                console.log(res);
-                navigate('/system/overview');
-            })
-            .catch(err => console.log(err));
+        // Function to handle form submission
+        e.preventDefault(); // Prevent default form submission
+
+        const token = localStorage.getItem("token"); // Get JWT token from local storage
+
+        if (!token) {
+            // Check if token exists
+            console.log("No token found, please log in again.");
+            navigate("/login"); // Redirect to login if no token
+            return;
+        }
+
+        try {
+            // Decode the JWT token using js-base64
+            const payload = JSON.parse(decode(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+            const currentTime = Date.now() / 1000; // Get current time in seconds
+
+            if (payload.exp < currentTime) {
+                // Check if token has expired
+                console.log("Token has expired.");
+                localStorage.removeItem("token"); // Remove expired token
+                navigate("/login"); // Redirect to login
+                return;
+            }
+
+            // Make the axios POST request
+            axios
+                .request(requestConfig)
+                .then((res) => {
+                    console.log(res);
+                    navigate("/system/overview"); // Redirect to overview page
+                })
+                .catch((err) => {
+                    console.error("Error:", err.response.data);
+                });
+        } catch (error) {
+            // Handle errors during token decoding
+            console.error("Error decoding token:", error);
+            navigate("/login"); // Redirect to login
+        }
     };
 
-    if (loading) {
-        return <div>Loading...</div>; // Renders a loading indicator while fetching data
-    }
-
-
-  
   return (
     <>
       <div className="main-form">
@@ -197,9 +233,7 @@ export default function AddStudent({ setActivePage }) {
                 <span>
                   <fieldset>
                     <legend className="medical">Medical Information</legend>
-                    <label>
-                    Medical Conditions if Any
-                    </label>
+                    <label>Medical Conditions if Any</label>
                     <textarea
                       onChange={(e) => setmedical_info(e.target.value)}
                       value={medical_info}

@@ -24,7 +24,7 @@ const App = () => {
     } else {
       setIsAuthenticated(false);
     }
-  }, []);
+  }, []); // This should trigger when the app is mounted
 
   // Handle logout: remove token from localStorage and update isAuthenticated state
   const handleLogout = () => {

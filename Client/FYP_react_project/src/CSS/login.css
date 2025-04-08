@@ -34,6 +34,12 @@ body{
   outline: none;
   transition: .3s;
 }
+
+.login-logo img{
+  height: 200px;
+  margin-left: 10px;
+}
+
 ::placeholder{
   font-weight: 500;
   color: #222;

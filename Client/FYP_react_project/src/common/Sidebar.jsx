@@ -2,19 +2,11 @@
 import React from "react";
 import {Link} from "react-router-dom"
 import { useNavigate } from "react-router-dom";
-
-// eslint-disable-next-line react/prop-types
 export default function Sidebar({activePage}) {
 
   const navigate = useNavigate()
 
-  function logoutFunc(){
-        // Removes the token from localStorage
-        localStorage.removeItem('token');
-    
-        // Redirects you to login page
-        navigate('/login');
-  }
+
 
   return (
     <>
@@ -41,11 +33,7 @@ export default function Sidebar({activePage}) {
           <li className={(activePage === "overview")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="overview"><span className="material-icons-outlined">article</span>Overview</Link>
           </li>
-
-          {/* logout */}
-          <li className="sidebar-list-item" onClick={logoutFunc}>
-            <span className="material-icons-outlined">logout</span>Logout
-          </li>
+          
         </ul>
       </div>
     </>
