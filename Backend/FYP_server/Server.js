@@ -1,5 +1,5 @@
 import express from "express";
-import mysql from "mysql";
+import mysql from "mysql"
 import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
@@ -31,6 +31,29 @@ function authenticateUser(req, res, next) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 }
+// JWT Verification Middleware
+const verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"]?.split(" ")[1]; // Extract the token from the Authorization header
+
+  if (!token) {
+    return res.status(403).json({ message: "Token is required" });
+  }
+
+  // Decode the token
+  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+    if (err) {
+      console.error("Error decoding token:", err);
+      return res.status(403).json({ message: "Invalid or expired token" });
+    }
+
+    console.log("Decoded token:", decoded); // Log the decoded token to check its contents
+
+    // Attach the decoded token to the request
+    req.user = decoded;  // Now `req.user` will have the decoded token, including the `school_id`
+    next(); // Proceed to the next middleware/route handler
+  });
+};
+
 
 app.post("/schools", (req, res) => {
   const sql =
@@ -166,15 +189,31 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.get("/readschools", (req, res) => {
-  const sql = "SELECT * FROM schools";
-  db.query(sql, (err, result) => {
-    if (err) return res.json({ Message: "Error on server" });
-    return res.json(result);
+app.get("/students/count", authenticateUser, (req, res) => {
+  const schoolId = req.user.school_id;
+  console.log("Received School ID:", schoolId);
+
+  const sql = "SELECT COUNT(*) AS count FROM students WHERE school_id = ?";
+  console.log("SQL Query:", sql, [schoolId]);
+
+  db.query(sql, [schoolId], (err, results) => {
+    if (err) {
+      console.error("Error fetching student count:", err);
+      return res.status(500).json({ error: "Internal Server Error", details: err.message });
+    }
+
+    console.log("Query Result (results):", results);
+
+    if (results && results.length > 0) {
+      res.json({ count: results[0].count });
+    } else {
+      res.status(200).json({ count: 0, message: "No students found for this school" });
+    }
   });
 });
 
-// reading all registering students api
+
+// reading all registered students api
 app.get("/", authenticateUser, (req, res) => {
   const schoolId = req.user.school_id; // Extract `school_id` from logged-in user's token
 
@@ -194,28 +233,6 @@ app.get("/", authenticateUser, (req, res) => {
   });
 });
 
-// JWT Verification Middleware
-const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"]?.split(" ")[1]; // Extract the token from the Authorization header
-
-  if (!token) {
-    return res.status(403).json({ message: "Token is required" });
-  }
-
-  // Decode the token
-  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-    if (err) {
-      console.error("Error decoding token:", err);
-      return res.status(403).json({ message: "Invalid or expired token" });
-    }
-
-    console.log("Decoded token:", decoded); // Log the decoded token to check its contents
-
-    // Attach the decoded token to the request
-    req.user = decoded;  // Now `req.user` will have the decoded token, including the `school_id`
-    next(); // Proceed to the next middleware/route handler
-  });
-};
 
 // Register Student API
 app.post("/students", verifyToken, (req, res) => {

@@ -1,7 +1,7 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import PropTypes from 'prop-types';  // Import PropTypes
+import PropTypes from 'prop-types';
 import '../CSS/login.css';
 
 export default function Login({ setIsAuthenticated }) {
@@ -9,15 +9,13 @@ export default function Login({ setIsAuthenticated }) {
     username: '',
     password: ''
   });
-  
+
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleChanges = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  // Handle login submission
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -30,14 +28,12 @@ export default function Login({ setIsAuthenticated }) {
       );
 
       if (response.status === 200) {
-        // Save JWT token in localStorage to authenticate future requests
         localStorage.setItem('token', response.data.token);
         console.log("Login successful:", response.data);
 
-        // Update the authentication status
+        //Set authenticated state and navigate
         setIsAuthenticated(true);
-
-        // Redirect to the dashboard after successful login
+        console.log("Navigating to dashboard...");
         navigate('/system/dashboard');
       }
     } catch (err) {
@@ -51,7 +47,7 @@ export default function Login({ setIsAuthenticated }) {
       <form onSubmit={handleLogin}>
         <div className="login-box">
           <div className="login-header">
-            <header className='login-logo'><img src="school_logo.jpg" alt="" /></header>
+            <header className='login-logo'><img src="school_logo.jpg" alt="School Logo" /></header>
           </div>
           <div className="input-box">
             <input 
@@ -86,7 +82,7 @@ export default function Login({ setIsAuthenticated }) {
   );
 }
 
-// Validate the props
+//required if Login expects the prop
 Login.propTypes = {
-  setIsAuthenticated: PropTypes.func.isRequired // Prop is required and should be a function
+  setIsAuthenticated: PropTypes.func.isRequired
 };

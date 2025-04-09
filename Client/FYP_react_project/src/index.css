@@ -200,6 +200,10 @@ body {
   font-weight: 600;
 }
 
+.counts{
+  color:  black;
+}
+
 .card-inner {
   display: flex;
   align-items: center;
@@ -209,6 +213,7 @@ body {
 .card-inner > p {
   font-size: 18px;
   font-weight: bold;
+  color: black;
 }
 
 .card-inner > span {

@@ -16,20 +16,15 @@ const App = () => {
   const [activePage, setActivePage] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // On app load, check if the token exists in localStorage and update the authentication status
+  //Check authentication on app load and on token change
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, []); // This should trigger when the app is mounted
+    setIsAuthenticated(!!token); // true if token exists
+  }, []); // Only runs on first load
 
-  // Handle logout: remove token from localStorage and update isAuthenticated state
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsAuthenticated(false); // Update authentication state after logout
+    setIsAuthenticated(false);
   };
 
   return (
@@ -39,7 +34,14 @@ const App = () => {
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
 
         {/* Protected routes */}
-        <Route path="/system" element={isAuthenticated ? <Layout activePage={activePage} handleLogout={handleLogout} /> : <Navigate to="/login" />}>
+        <Route
+          path="/system"
+          element={
+            isAuthenticated
+              ? <Layout activePage={activePage} handleLogout={handleLogout} />
+              : <Navigate to="/login" />
+          }
+        >
           <Route path="dashboard" element={<Dashboard setActivePage={setActivePage} />} />
           <Route path="check-student" element={<CheckStudent setActivePage={setActivePage} />} />
           <Route path="add-student" element={<AddStudent setActivePage={setActivePage} />} />
@@ -51,6 +53,7 @@ const App = () => {
         </Route>
 
         {/* Catch-all route for invalid URLs */}
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

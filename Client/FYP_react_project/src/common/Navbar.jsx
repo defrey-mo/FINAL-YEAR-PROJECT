@@ -8,10 +8,9 @@ export default function Navbar() {
 
   // On component mount, fetch the school name from the JWT token in localStorage
   useEffect(() => {
-    const token = localStorage.getItem("token");  // Get token from localStorage
-
+    const token = localStorage.getItem("token"); 
     if (token) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));  // Decode JWT token
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));  // Decodes the JWT token
       setSchoolName(decodedToken.school_name);  // Set the school name from token
     }
   }, []);
