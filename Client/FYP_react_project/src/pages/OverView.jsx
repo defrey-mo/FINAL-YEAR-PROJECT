@@ -90,7 +90,7 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
             })
           ) : (
             <tr>
-              <td colSpan="8">No students found for your school.</td>
+              <td colSpan="8">No students found for this school.</td>
             </tr>
           )}
         </tbody>

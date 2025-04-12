@@ -1,15 +1,19 @@
 /* eslint-disable no-unused-vars */
+
 import React, { useEffect, useState } from "react";
 import Sidebar from "../common/Sidebar";
 import Navbar from "../common/Navbar";
 import Chart from "react-apexcharts";
-import axios from 'axios';
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default function Dashboard({ setActivePage }) {
   setActivePage("dashboard");
 
   const [studentCount, setStudentCount] = useState(null);
+  const [conductCount, setConductCount] = useState(0);
+  const [incidentCategories, setIncidentCategories] = useState([]);
+  const [incidentCounts, setIncidentCounts] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -18,135 +22,163 @@ export default function Dashboard({ setActivePage }) {
         const token = localStorage.getItem("token"); // Get the JWT token from local storage
         const response = await axios.get("http://localhost:8084/students/count", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Make sure "token" is the correct key where you store the JWT
+            Authorization: `Bearer ${token}`, // Make sure "token" is the correct key where you store the JWT
           },
         });
-
         console.log("Student Count Response:", response.data);  // Log the response to verify structure
-
         setStudentCount(response.data.count);
       } catch (error) {
         console.error("Failed to fetch student count:", error);
         setError("Failed to fetch student count");
       }
     };
-  
     fetchStudentCount();
   }, []);
-  
+
+  useEffect(() => {
+    const fetchConductCount = async () => {
+      try {
+        const response = await axios.get("http://localhost:8084/conduct-details/count", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Conduct Reported Count:", response.data);
+        setConductCount(response.data.count);
+      } catch (error) {
+        console.error("Failed to fetch conduct report count:", error);
+        setError("Failed to fetch conduct report count");
+      }
+    };
+    fetchConductCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchIncidentCounts = async () => {
+      try {
+        const response = await axios.get("http://localhost:8084/conduct-details/nature-counts", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Incident Counts by Nature:", response.data);
+
+        // Assuming response.data is an array like [{ nature_of_incident: 'Bullying', incident_count: 5 }, ...]
+        const categories = response.data.map(item => item.nature_of_incident);
+        const counts = response.data.map(item => item.incident_count);
+
+        console.log("Categories:", categories);
+        console.log("Counts:", counts);
+
+        setIncidentCategories(categories);
+        setIncidentCounts(counts);
+      } catch (error) {
+        console.error("Failed to fetch incident counts:", error);
+        setError("Failed to fetch incident counts");
+      }
+    };
+    fetchIncidentCounts();
+  }, []);
 
   const cardsData = [
     {
       title: "Registered Students",
       ico: "groups",
-      counts:  studentCount,
+      counts: studentCount,
       color: "#246dec",
-      link: "/system/overview"
+      link: "/system/overview",
     },
     {
-      title: "Reported Cases",
+      title: "Reported Incidents",
       ico: "notifications",
-      counts: 250,
+      counts: conductCount,
       color: "#367952",
+      link: "/system/incidents",
     },
   ];
-
 
   const areaChartOptions = {
     series: [
       {
-        data: [10, 8, 6, 2, 8]
-      }
+        data: [10, 8, 6, 2, 8],
+      },
     ],
     option: {
       chart: {
-        type: 'bar', 
+        type: "bar",
         height: 350,
         toolbar: {
-          show: false
+          show: false,
         },
       },
-      colors: [
-        "#246dec",
-        "#cc3c43",
-        "#367952",
-        "#f5b74f",
-        "#4f35a1"  
-      ],
+      colors: ["#246dec", "#cc3c43", "#367952", "#f5b74f", "#4f35a1"],
       plotOptions: {
         bar: {
           distributed: true,
           borderRadius: 4,
-          borderRadiusApplication: 'end',
+          borderRadiusApplication: "end",
           horizontal: false,
-          columnWidth: '60%',
-        }
+          columnWidth: "60%",
+        },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       legend: {
-        show: false
+        show: false,
       },
       xaxis: {
         categories: ["2023", "2022", "2021", "2020", "2019"],
       },
       yaxis: {
         title: {
-          text: "Total Number of Students Registered"
-        }
-      }
-    }
+          text: "Total Number of Students Registered",
+        },
+      },
+    },
   };
 
-  const someChartOptions = {
+  const incidentChartOptions = {
     series: [
       {
-        data: [10, 8, 6, 2, 8, 7]
-      }
+        data: incidentCounts.length > 0 ? incidentCounts : [0], // Dynamic chart data for incidents
+      },
     ],
     option: {
       chart: {
-        type: 'bar', 
+        type: "bar",
         height: 350,
         toolbar: {
-          show: false
+          show: false,
         },
       },
-      colors: [
-        "#246dec",
-        "#cc3c43",
-        "#367952",
-        "#f5b74f",
-        "#4f35a1",
-        "#cc3c43"  
-      ],
+      colors: ["#246dec", "#cc3c43", "#367952", "#f5b74f", "#4f35a1", "#cc3c43"],
       plotOptions: {
         bar: {
           distributed: true,
           borderRadius: 4,
-          borderRadiusApplication: 'end',
+          borderRadiusApplication: "end",
           horizontal: false,
-          columnWidth: '60%',
-        }
+          columnWidth: "60%",
+        },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       legend: {
-        show: false
+        show: false,
       },
       xaxis: {
-        categories: ["Bullying", "Disruptive Behaviour", "Cheating", "Inciting Strike", "Respectfullness", "Leadership"],
+        categories: incidentCategories.length > 0 ? incidentCategories : ["No Data"], // Dynamic x-axis categories
       },
       yaxis: {
         title: {
-          text: "Total Number of Reported Incidents/Cases"
-        }
-      }
-    }
+          text: "Number of Reported Incidents",
+        },
+      },
+    },
   };
-  
+
   return (
     <>
       <div className="main-cards">
@@ -164,15 +196,15 @@ export default function Dashboard({ setActivePage }) {
         })}
       </div>
 
-      <div class="charts">
-        <div class="charts-card">
-          <p class="chart-title">STUDENTS REGISTERED</p>
-          <Chart type="bar" height={areaChartOptions.option.height} options={areaChartOptions.option} series={areaChartOptions.series}/>
+      <div className="charts">
+        <div className="charts-card">
+          <p className="chart-title">STUDENTS REGISTERED</p>
+          <Chart type="bar" height={areaChartOptions.option.height} options={areaChartOptions.option} series={areaChartOptions.series} />
         </div>
         <div className="charts-card">
-          <p className="chart-title">REPORTED CASES</p>
-        <Chart type="bar" height={someChartOptions.option.height} options={someChartOptions.option} series={someChartOptions.series}/>
-       </div>
+          <p className="chart-title">REPORTED INCIDENTS</p>
+          <Chart type="bar" height={incidentChartOptions.option.height} options={incidentChartOptions.option} series={incidentChartOptions.series} />
+        </div>
       </div>
     </>
   );
@@ -180,17 +212,14 @@ export default function Dashboard({ setActivePage }) {
 
 function Card({ counts, title, ico, color, link }) {
   return (
-    <Link to={link} style={{ textDecoration: 'none' }}>
-      <div
-      class="card"
-      style={color ? { borderLeft: "7px solid " + color } : null}
-    >
-      <div className="card-inner">
-        <p class="text-primary">{title}</p>
-        <span class="material-icons-outlined text-blue">{ico}</span>
+    <Link to={link} style={{ textDecoration: "none" }}>
+      <div className="card" style={color ? { borderLeft: "7px solid " + color } : null}>
+        <div className="card-inner">
+          <p className="text-primary">{title}</p>
+          <span className="material-icons-outlined text-blue">{ico}</span>
+        </div>
+        <span className="counts">{counts}</span>
       </div>
-      <span className="counts">{counts}</span>
-    </div>
     </Link>
   );
 }

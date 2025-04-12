@@ -11,6 +11,7 @@ import CheckStudent from "./pages/CheckStudent";
 import Update from "./pages/Update";
 import Conduct from "./pages/Conduct";
 import Status from "./pages/Status";
+import Incidents from "./pages/Incidents";
 
 const App = () => {
   const [activePage, setActivePage] = useState(null);
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="add-student" element={<AddStudent setActivePage={setActivePage} />} />
           <Route path="conduct/:id" element={<Conduct setActivePage={setActivePage} />} />
           <Route path="update/:id" element={<Update setActivePage={setActivePage} />} />
+          <Route path="incidents" element={<Incidents />} />
           <Route path="status/:id" element={<Status setActivePage={setActivePage} />} />
           <Route path="overview" element={<OverView setActivePage={setActivePage} />} />
           <Route path="read/:id" element={<Read />} />

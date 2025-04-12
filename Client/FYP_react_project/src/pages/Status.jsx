@@ -10,11 +10,11 @@ export default function Conduct() {
 
   const [values, setValues] = useState({
     student_id: id,
-    registration_status: "Fully Registered",
-    fee_payment_status: "Fully Paid",
-    scholarship_financial_aid: "Yes",
-    emotional_wellbeing: "Happy",
-    peer_relationship: "Good",
+    registration_status: "",
+    fee_payment_status: "",
+    scholarship_financial_aid: "",
+    emotional_wellbeing: "",
+    peer_relationship: "",
     guardian_contact: ""
   });
 
@@ -33,7 +33,7 @@ export default function Conduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     const requestConfig2 = {
       method: "post",
       url: "http://localhost:8084/status",
@@ -41,9 +41,9 @@ export default function Conduct() {
         "Content-Type": "application/json",
         Accept: "application/json"
       },
-      data: values
+      data: values // Ensure all values in the object are correct and match the backend expectations
     };
-
+  
     try {
       await axios.request(requestConfig2);
       console.log("Form submitted successfully");

@@ -27,9 +27,6 @@ export default function Sidebar({activePage}) {
           <li className={(activePage === "add-student")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="add-student"><span className="material-icons-outlined">group_add</span>Add Student</Link>
           </li>
-          {/* <li class={(activePage === "update-student")?"sidebar-list-item active":"sidebar-list-item"}>
-            <Link to="update-student"><span class="material-icons-outlined">update</span>Update Student</Link>
-          </li> */}
           <li className={(activePage === "overview")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="overview"><span className="material-icons-outlined">article</span>Overview</Link>
           </li>
