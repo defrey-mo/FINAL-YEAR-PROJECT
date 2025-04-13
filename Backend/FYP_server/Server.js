@@ -54,6 +54,17 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+function authorizedRoles(allowedRoles) {
+  return (req, res, next) => {
+    const userRole = req.user?.role;
+
+    if (!userRole || !allowedRoles.includes(userRole)) {
+      return res.status(403).json({ message: "Access forbidden: insufficient role" });
+    }
+
+    next();
+  };
+}
 
 app.post("/schools", (req, res) => {
   const sql =
@@ -73,6 +84,16 @@ app.post("/schools", (req, res) => {
   });
 });
 
+// Fetch all schools
+app.get("/readschools", (req, res) => {
+  db.query("SELECT * FROM schools", (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(200).json(results);
+  });
+});
+
 // Fetch all school IDs
 app.get("/school", (req, res) => {
   db.query("SELECT school_id FROM schools", (err, results) => {
@@ -83,13 +104,14 @@ app.get("/school", (req, res) => {
   });
 });
 
+
 app.post("/staffs", async (req, res) => {
   console.log('Incoming request body:', req.body);
 
   const { staff_id, firstname, middlename, surname, nationality, gender, school_id, phone, email, home_address, emergency_name, emergency_phone, emergency_email, emergency_address, username, password, role } = req.body;
 
   // Validation checks
-  if (!staff_id || !firstname || !surname || !nationality || !gender || !school_id || !phone || !email || !home_address || !emergency_name || !emergency_phone || !emergency_email || !emergency_address || !username || !password || !role) {
+  if (!staff_id || !firstname || !surname || !nationality || !gender || !school_id || !phone || !email || !home_address ||  !username || !password || !role) {
     return res.status(400).send({ message: "All fields must be filled" });
   }
 

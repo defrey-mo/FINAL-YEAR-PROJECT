@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import "../CSS/overview.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { decode } from "js-base64";
 
 export default function OverView({ students, fetchStudents, setActivePage }) {
   setActivePage("overview");
   
   const [data, setData] = useState([]);
+  const [role, setRole] = useState("");  // Add state to store the role
 
   // Fetch students only for the logged-in user's school
   useEffect(() => {
@@ -16,6 +18,16 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
     if (!token) {
       console.error("No token found! User not authenticated.");
       return;
+    }
+
+    // Decode the token to get the role
+    try {
+      const payloadBase64 = token.split(".")[1];
+      const payloadJson = decode(payloadBase64);
+      const payload = JSON.parse(payloadJson);
+      setRole(payload.role);  // Set role in state
+    } catch (err) {
+      console.error("Invalid token or decoding error:", err);
     }
 
     // Make a GET request to fetch students, passing the token in the Authorization header
@@ -33,7 +45,7 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
           alert("You are not authorized to view this data. Please log in.");
         }
       });
-  }, []);
+  }, []);  // Empty dependency array to run only on mount
 
   return (
     <div>
@@ -83,7 +95,9 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
                         </Link>
                       </div>
                     </div>
-                    <button className="delete">Delete</button>
+                    {(role === "Admin" || role === "Registrar") && (
+                      <button className="delete">Delete</button>
+                    )}
                   </td>
                 </tr>
               );

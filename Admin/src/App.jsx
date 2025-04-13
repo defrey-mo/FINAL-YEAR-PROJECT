@@ -8,7 +8,7 @@ import Layout from "./common/Layout";
 import AddStudent from "./pages/AddStudent";
 import OverView from "./pages/OverView";
 import Read from "./pages/Read"
-import CheckStudent from "./pages/CheckStudent";
+import AddStaff from "./pages/AddStaff";
 import Update from "./pages/Update";
 import Conduct from "./pages/Conduct";
 import Status from "./pages/Status"
@@ -39,8 +39,8 @@ const App = () => {
             element={<Dashboard setActivePage={setActivePage} />}
           />
           <Route
-            path="check-student"
-            element={<CheckStudent setActivePage={setActivePage} />}
+            path="add-staff"
+            element={<AddStaff setActivePage={setActivePage} />}
           />
           <Route
             path="add-student"

@@ -97,51 +97,10 @@ export default function Dashboard({ setActivePage }) {
     },
   ];
 
-  const areaChartOptions = {
-    series: [
-      {
-        data: [10, 8, 6, 2, 8],
-      },
-    ],
-    option: {
-      chart: {
-        type: "bar",
-        height: 350,
-        toolbar: {
-          show: false,
-        },
-      },
-      colors: ["#246dec", "#cc3c43", "#367952", "#f5b74f", "#4f35a1"],
-      plotOptions: {
-        bar: {
-          distributed: true,
-          borderRadius: 4,
-          borderRadiusApplication: "end",
-          horizontal: false,
-          columnWidth: "60%",
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      legend: {
-        show: false,
-      },
-      xaxis: {
-        categories: ["2023", "2022", "2021", "2020", "2019"],
-      },
-      yaxis: {
-        title: {
-          text: "Total Number of Students Registered",
-        },
-      },
-    },
-  };
-
   const incidentChartOptions = {
     series: [
       {
-        data: incidentCounts.length > 0 ? incidentCounts : [0], // Dynamic chart data for incidents
+        data: incidentCounts.length > 0 ? incidentCounts : [0], 
       },
     ],
     option: {
@@ -198,12 +157,10 @@ export default function Dashboard({ setActivePage }) {
 
       <div className="charts">
         <div className="charts-card">
-          <p className="chart-title">STUDENTS REGISTERED</p>
-          <Chart type="bar" height={areaChartOptions.option.height} options={areaChartOptions.option} series={areaChartOptions.series} />
-        </div>
-        <div className="charts-card">
           <p className="chart-title">REPORTED INCIDENTS</p>
           <Chart type="bar" height={incidentChartOptions.option.height} options={incidentChartOptions.option} series={incidentChartOptions.series} />
+        </div>
+        <div className="charts-card">
         </div>
       </div>
     </>

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 export default function CheckStudent({ setActivePage }) {
-  setActivePage("check-student");
+  setActivePage("add-staff");
     
     const randNum = Math.floor(Math.random() * 1000);
         
