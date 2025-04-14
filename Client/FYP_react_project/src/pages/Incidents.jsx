@@ -53,6 +53,7 @@ export default function Incidents() {
 
   return (
     <div>
+      <p className="incidents">Student's List with Reported Incidents</p>
       <table id="table">
         <thead>
           <tr>

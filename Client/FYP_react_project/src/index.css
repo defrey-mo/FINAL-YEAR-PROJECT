@@ -242,6 +242,12 @@ body {
   box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
 }
 
+.charts-card p{
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+
 .chart-title {
   display: flex;
   align-items: center;

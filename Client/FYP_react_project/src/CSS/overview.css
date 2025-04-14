@@ -133,6 +133,15 @@ table, td {
   margin-bottom: 1px;
   font-size: 25px;
   text-transform: uppercase;
-  margin-left: 450px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.incidents{
+  text-transform: uppercase;
+  margin-top: 2px;
+  margin-bottom: 1px;
+  font-size: 25px;
+  text-align: center;
   font-weight: bold;
 }

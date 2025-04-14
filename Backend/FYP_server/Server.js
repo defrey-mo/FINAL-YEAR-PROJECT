@@ -54,6 +54,7 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+
 function authorizedRoles(allowedRoles) {
   return (req, res, next) => {
     const userRole = req.user?.role;
@@ -254,6 +255,56 @@ app.get("/", authenticateUser, (req, res) => {
         return res.json(result);
   });
 });
+
+app.post("/students", verifyToken, (req, res) => {
+  const {
+    student_id,
+    firstname,
+    middlename,
+    surname,
+    dob,
+    gender,
+    medical_info,
+    guardian_fullnames,
+    guardian_phone,
+    guardian_email,
+    home_address,
+    prev_school
+  } = req.body;
+
+  const school_id = req.user.school_id; // Extracted from JWT
+
+  const sql = `
+    INSERT INTO students 
+    (student_id, firstname, middlename, surname, dob, gender, medical_info, guardian_fullnames, guardian_phone, guardian_email, home_address, prev_school, school_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [
+    student_id,
+    firstname,
+    middlename,
+    surname,
+    dob,
+    gender,
+    medical_info,
+    guardian_fullnames,
+    guardian_phone,
+    guardian_email,
+    home_address,
+    prev_school,
+    school_id
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error inserting student:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    return res.status(201).json({ message: "Student created successfully", studentId: student_id });
+  });
+});
+
 
 app.get('/conduct-details', (req, res) => {
   const authHeader = req.headers.authorization;

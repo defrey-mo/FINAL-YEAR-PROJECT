@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
+
 import React from "react";
 import "../CSS/check.css";
 
-// eslint-disable-next-line react/prop-types
+
 export default function CheckStudent({ setActivePage }) {
   setActivePage("check-student");
 

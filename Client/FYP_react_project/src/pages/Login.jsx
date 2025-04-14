@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { decode } from "js-base64";
 import '../CSS/login.css';
 
 export default function Login({ setIsAuthenticated }) {
@@ -26,15 +27,30 @@ export default function Login({ setIsAuthenticated }) {
           headers: { "Content-Type": "application/json" }
         }
       );
-
+  
       if (response.status === 200) {
-        localStorage.setItem('token', response.data.token);
+        const token = response.data.token;
+        localStorage.setItem('token', token);
         console.log("Login successful:", response.data);
-
-        //Set authenticated state and navigate
+  
+        // Decode token and check role
+        const payloadBase64 = token.split(".")[1];
+        const payloadJson = decode(payloadBase64);
+        const payload = JSON.parse(payloadJson);
+        const role = payload.role;
+  
+        console.log("User role:", role);
+  
+        // Set authenticated state
         setIsAuthenticated(true);
-        console.log("Navigating to dashboard...");
-        navigate('/system/dashboard');
+  
+
+        if (role === "Admin") {
+          console.log("Navigating to dashboard...");
+          navigate('/system/dashboard');
+        } else {
+          navigate('/system/check-student');
+        }
       }
     } catch (err) {
       console.error("Login error:", err.response?.data?.message || err.message);

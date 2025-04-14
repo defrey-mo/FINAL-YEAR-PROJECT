@@ -161,6 +161,17 @@ export default function Dashboard({ setActivePage }) {
           <Chart type="bar" height={incidentChartOptions.option.height} options={incidentChartOptions.option} series={incidentChartOptions.series} />
         </div>
         <div className="charts-card">
+          <p>Students with Negative incidents</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Names</th>
+                <th>Conduct Type</th>
+                <th>Action taken</th>
+              </tr>
+            </thead>
+          </table>
         </div>
       </div>
     </>
