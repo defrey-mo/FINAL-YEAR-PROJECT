@@ -25,25 +25,21 @@ select,
   border-radius: 5px;
   border: 1px solid #d2d2d3;
   box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
-  height: 75%;
-  width: 70%;
-  margin-left: 155px;
-  margin-top: 50px;
+  height: 55%;
+  width: 50%;
+  margin-top: 100px;
+  align-self: center;
   padding-left: 80px;
   color: black;
 }
 
-h1{
-  margin-left: 180px;
+.checking h1{
+ text-align: center;
+ text-transform: uppercase;
 } 
 
  button{
   margin-bottom: 0;
- }
-
- .form-group{
-  display: flex;
-  justify-content: space-between;
  }
 
   .form-group input{
@@ -55,7 +51,13 @@ h1{
   .checking form{
   display: inline-block;
   align-items: center;
-  margin-left: 50px;
+  text-align: center;
+  font-size: large;
+  font-family: sans-serif;
+}
+
+.checking form label{
+  font-weight: bold;
 }
 
 .checking form span{
@@ -67,12 +69,13 @@ h1{
 
 .checking form button{
   height: 25px;
-  margin-left: 390px;
+  margin-top: 20px;
   border-radius: 5px;
 }
 
 .checking button:hover{
   cursor: pointer;
+  background-color: grey;
 }
 
 .checking form input{

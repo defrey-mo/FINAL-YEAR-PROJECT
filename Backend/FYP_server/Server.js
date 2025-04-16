@@ -67,6 +67,62 @@ function authorizedRoles(allowedRoles) {
   };
 }
 
+app.post("/report", (req, res) => {
+  const { student_id } = req.body;
+
+  if (!student_id) {
+    return res.status(400).json({ message: "Student number is required" });
+  }
+
+  const sql = `
+    SELECT s.*, st.*, c.*
+    FROM students s
+    LEFT JOIN status st ON s.student_id = st.student_id
+    LEFT JOIN conduct c ON s.student_id = c.student_id
+    WHERE s.student_id = ?
+  `;
+
+  db.query(sql, [student_id], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/report/:student_id", (req, res) => {
+  const { student_id } = req.params;
+
+  if (!student_id) {
+    return res.status(400).json({ message: "Student number is required" });
+  }
+
+  const sql = `
+    SELECT s.*, st.*, c.*
+    FROM students s
+    LEFT JOIN status st ON s.student_id = st.student_id
+    LEFT JOIN conduct c ON s.student_id = c.student_id
+    WHERE s.student_id = ?
+  `;
+
+  db.query(sql, [student_id], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json(results);
+  });
+});
+
+
 app.post("/schools", (req, res) => {
   const sql =
     "INSERT INTO schools VALUE (" +
