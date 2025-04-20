@@ -1,0 +1,20 @@
+.report-page{
+    box-sizing: border-box;
+    background-color: white;
+    box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+    width: 800px;
+    margin-left: 150px;
+    margin-top: 0;
+    height: 570px;
+    padding: 10px;
+    overflow-y: scroll;
+  }
+
+  .report-page h1{
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .report-page h2{
+    text-transform: uppercase;
+  }

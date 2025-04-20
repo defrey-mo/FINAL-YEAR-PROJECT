@@ -32,7 +32,7 @@ export default function CheckStudent({ setActivePage }) {
         setError("Student number not found in the database.");
       }
     } catch (err) {
-      setError("Student id does not exist");
+      setError("Student number not found in the database.");
     }
   };
 

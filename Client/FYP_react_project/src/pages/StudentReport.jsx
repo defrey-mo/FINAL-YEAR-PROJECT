@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../CSS/studentReport.css";
 
 export default function StudentReport() {
   const location = useLocation();
@@ -47,49 +48,25 @@ export default function StudentReport() {
       {reportData.length > 0 && (
         <div className="report">
           <h2>Student Info</h2>
-          <p><strong>Full Name:</strong> {reportData[0].firstname}</p>
-          <p><strong>Class:</strong> {reportData[0].class}</p>
-          <p><strong>Student Number:</strong> {reportData[0].student_id}</p>
+          <p><strong>Full Name:</strong> {reportData[0].firstname} {reportData[0].middlename} {reportData[0].surname}</p>
+          <p><strong>Date of birth:</strong> {reportData[0].dob}</p>
+          <p><strong>Gender:</strong> {reportData[0].gender}</p>
+          <p><strong>Medical Info:</strong> {reportData[0].medical_info}</p>
 
-          <h3>Status Records</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reportData.map((row, idx) =>
-                row.status_description ? (
-                  <tr key={`status-${idx}`}>
-                    <td>{row.status_description}</td>
-                    <td>{row.date}</td>
-                  </tr>
-                ) : null
-              )}
-            </tbody>
-          </table>
+          
+          <h2>Conduct Records</h2>
+          <p><strong>Type of Conduct:</strong> {reportData[0].type_of_conduct}</p>
+          <p><strong>Nature of Incident:</strong> {reportData[0].nature_of_incident}</p>
+          <p><strong>Description of incident:</strong> {reportData[0].detailed_description}</p>
+          <p><strong>Action Taken:</strong> {reportData[0].action_taken}</p>
 
-          <h3>Conduct Records</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Conduct</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reportData.map((row, idx) =>
-                row.description ? (
-                  <tr key={`conduct-${idx}`}>
-                    <td>{row.description}</td>
-                    <td>{row.date}</td>
-                  </tr>
-                ) : null
-              )}
-            </tbody>
-          </table>
+
+          <h2>Status Records</h2>
+          <p><strong>Registration status:</strong> {reportData[0].registration_status}</p>
+          <p><strong>Peer Relationship:</strong> {reportData[0].peer_relationship}</p>
+          <p><strong>Fee payment status:</strong> {reportData[0].fee_payment_status}</p>
+          <p><strong>Guardian Contact:</strong> {reportData[0].guardian_contact}</p>
+          
         </div>
       )}
     </div>
