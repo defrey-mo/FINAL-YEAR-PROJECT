@@ -9,7 +9,7 @@ export default function Conduct() {
 
   const [values, setValues] = useState({
     student_id: id,
-    type_of_conduct: "Positive",
+    type_of_conduct: "--Select Type--",
     nature_of_incident: "Bullying",
     detailed_description: "",
     action_taken: "Verbal Warning",
@@ -52,6 +52,25 @@ export default function Conduct() {
     }
   };
 
+  const positiveIncidents = [
+    "Respectfulness",
+    "Leadership",
+    "Helping Others"
+  ];
+
+  const negativeIncidents = [
+    "Bullying",
+    "Disruptive Behaviour",
+    "Cheating Exams",
+    "Inciting Strike"
+  ];
+
+  const getIncidentOptions = () => {
+    if (values.type_of_conduct === "Positive") return positiveIncidents;
+    if (values.type_of_conduct === "Negative") return negativeIncidents;
+    return [];
+  };
+
   return (
     <div className="updating-page">
       <div className="updating-form">
@@ -70,29 +89,33 @@ export default function Conduct() {
                 />
               </span>
               <span>
-                <label htmlFor="type-of-conduct">Type of Conduct</label>
+              <label htmlFor="type-of-conduct">Type of Conduct</label>
                 <select
                   id="type-of-conduct"
-                  onChange={(e) => setValues({ ...values, type_of_conduct: e.target.value })}
+                  onChange={(e) =>
+                    setValues({...values, type_of_conduct: e.target.value, nature_of_incident: ""})
+                  }
                   value={values.type_of_conduct}
                 >
+                  <option value="">--Select Type--</option>
                   <option value="Positive">Positive</option>
                   <option value="Negative">Negative</option>
                 </select>
               </span>
               <span>
-                <label htmlFor="nature-of-incident">Nature of Incident</label>
+              <label htmlFor="nature-of-incident">Nature of Incident</label>
                 <select
                   id="nature-of-incident"
-                  onChange={(e) => setValues({ ...values, nature_of_incident: e.target.value })}
+                  onChange={(e) =>
+                    setValues({ ...values, nature_of_incident: e.target.value })
+                  }
                   value={values.nature_of_incident}
+                  disabled={!values.type_of_conduct}
                 >
-                  <option value="Bullying">Bullying</option>
-                  <option value="Disruptive">Disruptive Behaviour</option>
-                  <option value="Cheating">Cheating</option>
-                  <option value="Inciting Strike">Inciting Strike</option>
-                  <option value="Respectfulness">Respectfulness</option>
-                  <option value="Leadership">Leadership</option>
+                  <option value="">--Select Nature--</option>
+                  {getIncidentOptions().map((item, index) => (
+                    <option key={index} value={item}>{item}</option>
+                  ))}
                 </select>
               </span>
               <span>
@@ -117,6 +140,7 @@ export default function Conduct() {
                   <option value="Detention">Detention</option>
                   <option value="Suspension">Suspension</option>
                   <option value="Expulsion">Expulsion</option>
+                  <option value="Awarded Certificate of Merit">Awarded Certificate of Merit</option>
                 </select>
               </span>
               <span>

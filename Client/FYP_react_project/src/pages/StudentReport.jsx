@@ -55,11 +55,16 @@ export default function StudentReport() {
 
           
           <h2>Conduct Records</h2>
-          <p><strong>Type of Conduct:</strong> {reportData[0].type_of_conduct}</p>
-          <p><strong>Nature of Incident:</strong> {reportData[0].nature_of_incident}</p>
-          <p><strong>Description of incident:</strong> {reportData[0].detailed_description}</p>
-          <p><strong>Action Taken:</strong> {reportData[0].action_taken}</p>
-
+            {reportData.map((record, index) => (
+              <div key={index} className="conduct-entry">
+                <h3>Incident {index + 1}</h3>
+                <p><strong>Type of Conduct:</strong> {record.type_of_conduct}</p>
+                <p><strong>Nature of Incident:</strong> {record.nature_of_incident}</p>
+                <p><strong>Description of incident:</strong> {record.detailed_description}</p>
+                <p><strong>Action Taken:</strong> {record.action_taken}</p>
+                <hr />
+              </div>
+            ))} 
 
           <h2>Status Records</h2>
           <p><strong>Registration status:</strong> {reportData[0].registration_status}</p>

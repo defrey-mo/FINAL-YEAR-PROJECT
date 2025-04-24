@@ -45,7 +45,7 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
           alert("You are not authorized to view this data. Please log in.");
         }
       });
-  }, []);  // Empty dependency array to run only on mount
+  }, []);
 
   return (
     <div>

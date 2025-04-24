@@ -37,7 +37,7 @@ export default function AddStudent({ setActivePage }) {
             })
             .catch((err) => {
                 console.error("Error fetching student IDs:", err);
-                setLoading(false); // Set loading to false even if there's an error
+                setLoading(false);
             });
     }, []); // Empty dependency array means this effect runs only once
 

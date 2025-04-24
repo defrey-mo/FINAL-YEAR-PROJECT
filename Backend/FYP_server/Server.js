@@ -200,6 +200,47 @@ app.post("/staffs", async (req, res) => {
   }
 });
 
+app.post("/new-staff",  verifyToken, async (req, res) => {
+  console.log('Incoming request body:', req.body);
+
+  const { staff_id, firstname, middlename, surname, nationality, gender, phone, email, home_address, emergency_name, emergency_phone, emergency_email, emergency_address, username, password, role } = req.body;
+
+  const school_id = req.user?.school_id; // Get school_id from token
+
+  // Validation checks
+  if (!staff_id || !firstname || !surname || !nationality || !gender || !school_id || !phone || !email || !home_address ||  !username || !password || !role) {
+    return res.status(400).send({ message: "All fields must be filled" });
+  }
+
+  try {
+    // Check if school exists
+    const school = await db.query("SELECT * FROM schools WHERE school_id = ?", [school_id]);
+    if (school.length === 0) {
+      return res.status(400).send({ message: "School not found" });
+    }
+
+    // Check if username is already taken
+    const userExists = await db.query("SELECT * FROM staff WHERE username = ?", [username]);
+    if (userExists.length > 0) {
+      return res.status(409).send({ message: "Username already taken" });
+    }
+
+    // Hash the password before saving to the database
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Insert staff data with the hashed password
+    const query = "INSERT INTO staff (staff_id, firstname, middlename, surname, nationality, gender, school_id, phone, email, home_address, emergency_name, emergency_phone, emergency_email, emergency_address, username, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    await db.query(query, [staff_id, firstname, middlename, surname, nationality, gender, school_id, phone, email, home_address, emergency_name, emergency_phone, emergency_email, emergency_address, username, hashedPassword, role]);
+
+    res.status(201).send({ message: "Staff created successfully" });
+  } catch (error) {
+    console.error("Error creating staff:", error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
+
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -311,6 +352,58 @@ app.get("/", authenticateUser, (req, res) => {
         return res.json(result);
   });
 });
+
+app.get("/students-with-negative-conduct", authenticateUser, (req, res) => {
+  const schoolId = req.user.school_id; // Logged-in user's school_id
+
+  const sql = `
+    SELECT 
+      students.*, 
+      conduct.* 
+    FROM 
+      students 
+    JOIN 
+      conduct 
+      ON students.student_id = conduct.student_id 
+    WHERE 
+      students.school_id = ? 
+      AND conduct.type_of_conduct = 'negative'
+  `;
+
+  db.query(sql, [schoolId], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Error on server", error: err.message });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "No students with negative conduct found for this school" });
+    }
+
+    return res.json(result);
+  });
+});
+
+
+app.get("/staff-view", authenticateUser, (req, res) => {
+  const schoolId = req.user.school_id; // Extract `school_id` from logged-in user's token
+
+    const sql = "SELECT * FROM staff WHERE school_id = ?";
+    
+    db.query(sql, [schoolId], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error on server", error: err.message });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ message: "No staff found for this school" });
+        }
+
+        return res.json(result);
+  });
+});
+
 
 app.post("/students", verifyToken, (req, res) => {
   const {
@@ -495,14 +588,14 @@ app.post("/conduct", (req, res) => {
 });
 
 app.post("/status", (req, res) => {
-  const { 
-    student_id, 
-    registration_status, 
-    fee_payment_status, 
-    scholarship_financial_aid, 
-    emotional_wellbeing, 
-    peer_relationship, 
-    guardian_contact 
+  const {
+    student_id,
+    registration_status,
+    fee_payment_status,
+    scholarship_financial_aid,
+    emotional_wellbeing,
+    peer_relationship,
+    guardian_contact
   } = req.body;
 
   // Map frontend values to backend ENUM values
@@ -536,32 +629,42 @@ app.post("/status", (req, res) => {
     never: 'Poor',
   };
 
-  // Map the frontend values to the correct values for database
+  // Map values
   const mappedRegistrationStatus = registrationStatusMap[registration_status] || registration_status;
   const mappedFeePaymentStatus = feePaymentStatusMap[fee_payment_status] || fee_payment_status;
   const mappedScholarshipFinancialAid = scholarshipFinancialAidMap[scholarship_financial_aid] || scholarship_financial_aid;
   const mappedEmotionalWellbeing = emotionalWellbeingMap[emotional_wellbeing] || emotional_wellbeing;
   const mappedPeerRelationship = peerRelationshipMap[peer_relationship] || peer_relationship;
+
   const sql = `
-    INSERT INTO status 
-    (student_id, registration_status, fee_payment_status, scholarship_financial_aid, emotional_wellbeing, peer_relationship, guardian_contact) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO status (
+      student_id, registration_status, fee_payment_status, 
+      scholarship_financial_aid, emotional_wellbeing, 
+      peer_relationship, guardian_contact
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+      registration_status = VALUES(registration_status),
+      fee_payment_status = VALUES(fee_payment_status),
+      scholarship_financial_aid = VALUES(scholarship_financial_aid),
+      emotional_wellbeing = VALUES(emotional_wellbeing),
+      peer_relationship = VALUES(peer_relationship),
+      guardian_contact = VALUES(guardian_contact)
   `;
-  
+
   db.query(sql, [
-    student_id, 
-    mappedRegistrationStatus, 
-    mappedFeePaymentStatus, 
-    mappedScholarshipFinancialAid, 
-    mappedEmotionalWellbeing, 
-    mappedPeerRelationship, 
+    student_id,
+    mappedRegistrationStatus,
+    mappedFeePaymentStatus,
+    mappedScholarshipFinancialAid,
+    mappedEmotionalWellbeing,
+    mappedPeerRelationship,
     guardian_contact
   ], (err, result) => {
     if (err) {
       console.error("Error with query:", err);
       return res.status(500).json({ error: err.message });
     }
-    return res.json({ message: "Student status updated successfully", result });
+    return res.json({ message: "Student status inserted or updated successfully", result });
   });
 });
 
@@ -615,6 +718,15 @@ app.get("/conduct-details/nature-counts", (req, res) => {
 
 app.get("/read/:id", (req, res) => {
   const sql = "SELECT * FROM students WHERE student_id = ?";
+  const id = req.params.id;
+  db.query(sql,[id], (err, result) => {
+    if (err) return res.json({ Message: "Error on server" });
+    return res.json(result);
+  });
+});
+
+app.get("/staff-read/:id", (req, res) => {
+  const sql = "SELECT * FROM staff WHERE staff_id = ?";
   const id = req.params.id;
   db.query(sql,[id], (err, result) => {
     if (err) return res.json({ Message: "Error on server" });

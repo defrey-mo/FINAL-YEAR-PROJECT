@@ -2,10 +2,13 @@
 import React, { useEffect, useState } from 'react'
 import '../CSS/staff-mgt.css';
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { decode } from 'js-base64';
+import axios from 'axios';
 
 
-export default function StaffManagement({ setActivePage }) {
-  setActivePage("staff-management");
+export default function StaffManagement() {
+
 
    const randNum = Math.floor(Math.random() * 1000);
           
@@ -27,39 +30,93 @@ export default function StaffManagement({ setActivePage }) {
       const [password, setpassword] = useState("");
       const [role, setrole] = useState("Admin");
       const [schools, setSchools] = useState([]);
+
+       const navigate = useNavigate();
       
       const consist = {
-        "staff_id": staff_id,
-        "firstname": firstname,
-        "middlename": middlename,
-        "surname": surname,
-        "nationality": nationality,
-        "gender": gender,
-        "school_id": school_id,
-        "phone": phone,
-        "email": email,
-        "home_address": home_address,
-        "emergency_name": emergency_name,
-        "emergency_phone": emergency_phone,
-        "emergency_email": emergency_email,
-        "emergency_address": emergency_address,
-        "username": username,
-        "password": password,
-        "role": role
+        staff_id,
+        firstname,
+        middlename,
+        surname,
+        nationality,
+        gender,
+        phone,
+        email,
+        home_address,
+        emergency_name,
+        emergency_phone,
+        emergency_email,
+        emergency_address,
+        username,
+        password,
+        role
       }
+
+      const requestConfig = {
+        // Configuration for the axios POST request
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "http://localhost:8084/new-staff", // API endpoint to register new student
+        headers: {
+            "content-type": "application/json",
+            accept: "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach JWT token
+        },
+        data: consist,
+    };
+
+      const handleSubmit = (e) => {
+              // Function to handle form submission
+              e.preventDefault(); // Prevent default form submission
+      
+              const token = localStorage.getItem("token"); // Get JWT token from local storage
+      
+              if (!token) {
+                  // Check if token exists
+                  console.log("No token found, please log in again.");
+                  navigate("/login"); // Redirect to login if no token
+                  return;
+              }
+      
+              try {
+                  // Decode the JWT token using js-base64
+                  const payload = JSON.parse(decode(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                  const currentTime = Date.now() / 1000; // Get current time in seconds
+      
+                  if (payload.exp < currentTime) {
+                      // Check if token has expired
+                      console.log("Token has expired.");
+                      localStorage.removeItem("token"); // Remove expired token
+                      navigate("/login"); // Redirect to login
+                      return;
+                  }
+      
+                  // Make the axios POST request
+                  axios
+                      .request(requestConfig)
+                      .then((res) => {
+                          console.log(res);
+                          navigate("/system/staff-view"); // Redirect to overview page
+                      })
+                      .catch((err) => {
+                          console.error("Error:", err.response.data);
+                      });
+              } catch (error) {
+                  // Handle errors during token decoding
+                  console.error("Error decoding token:", error);
+                  navigate("/login"); // Redirect to login
+              }
+          };
+      
 
   return (
    <>
     <div className='staff-management'>
-      <div className='duties'>
-        <ul>
-          <li><Link>Overview</Link></li>
-        </ul>
-      </div>
+      
       <div className="main-form">
         <h1>Staff Registration Form</h1>
         <div className="form">
-          <form autoComplete="off">
+          <form autoComplete="off" onSubmit={handleSubmit}>
             <section>
               <fieldset>
                 <legend>Personal Information</legend>
@@ -134,16 +191,6 @@ export default function StaffManagement({ setActivePage }) {
                     <option value="female">Female</option>
                   </select>
                 </span>
-                <span>
-                  <label>School ID</label>
-                  <select onChange={(e) => setschool_id(e.target.value)} value={school_id} required>
-                    <option value="">Select a School</option>
-                    {schools.map((school) => (
-                      <option key={school.school_id} value={school.school_id}>{school.school_id}</option>
-                    ))}
-                  </select>
-                </span>
-
                 <span>
                   <fieldset>
                     <legend className="medical">Account credentials & Role</legend>

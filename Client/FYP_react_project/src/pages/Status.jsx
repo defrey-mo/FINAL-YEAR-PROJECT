@@ -79,6 +79,7 @@ export default function Conduct() {
                           onChange={(e) => setValues({ ...values, registration_status: e.target.value })}
                           value={values.registration_status}
                         >
+                            <option value="">--Enter registration status--</option>
                             <option value="positive">Fully Registered</option>
                             <option value="negative">Pending</option>
                             <option value="never">Not Registered</option>
@@ -89,7 +90,7 @@ export default function Conduct() {
                         <select name="toc" id="toc"
                           onChange={(e) => setValues({ ...values, fee_payment_status: e.target.value })}
                           value={values.fee_payment_status}
-                        >
+                        >   <option value="">--Enter payment status--</option>
                             <option value="positive">Fully Paid</option>
                             <option value="negative">Partially Paid</option>
                             <option value="never">Not Paid</option>
@@ -101,6 +102,7 @@ export default function Conduct() {
                           onChange={(e) => setValues({ ...values, scholarship_financial_aid: e.target.value })}
                           value={values.scholarship_financial_aid}
                         >
+                            <option value="">--Enter scholarship status--</option>
                             <option value="positive">Yes</option>
                             <option value="negative">No</option>
                         </select>
@@ -111,6 +113,7 @@ export default function Conduct() {
                           onChange={(e) => setValues({ ...values, emotional_wellbeing: e.target.value })}
                           value={values.emotional_wellbeing}
                         >
+                            <option value="">--Enter wellbeing--</option>
                             <option value="vw">Happy</option>
                             <option value="ww">Stressed</option>
                             <option value="pn">Anxious</option>
@@ -123,6 +126,7 @@ export default function Conduct() {
                           onChange={(e) => setValues({ ...values, peer_relationship: e.target.value })}
                           value={values.peer_relationship}
                         >
+                            <option value="">--Enter peer status--</option>
                             <option value="positive">Good</option>
                             <option value="negative">Average</option>
                             <option value="never">Poor</option>

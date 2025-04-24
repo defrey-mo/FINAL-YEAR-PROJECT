@@ -60,7 +60,7 @@ export default function Incidents() {
             {/* Student Info */}
             <th>Student ID</th>
             <th>First Name</th>
-            <th>Surname</th>
+            <th>Last name</th>
             <th>Registration Status</th>
             <th>Fee Payment Status</th>
             <th>Conduct Type</th>
@@ -74,7 +74,7 @@ export default function Incidents() {
               <tr key={index}>
                 <td>{row.student_id}</td>
                 <td>{row.firstname}</td>
-                <td>{row.surname}</td>
+                <td>{row.middlename}</td>
                 <td>{row.registration_status || "N/A"}</td>
                 <td>{row.fee_payment_status || "N/A"}</td>
                 <td>{row.type_of_conduct || "N/A"}</td>

@@ -14,6 +14,11 @@ import Status from "./pages/Status";
 import Incidents from "./pages/Incidents";
 import StaffManagement from "./pages/StaffManagement";
 import StudentReport from "./pages/StudentReport";
+import StaffView from "./pages/staffView";
+import StaffRead from "./pages/StaffRead";
+import StaffSetting from "./pages/StaffSetting";
+import Delete from "./pages/Delete";
+
 
 
 const App = () => {
@@ -52,9 +57,13 @@ const App = () => {
           <Route path="conduct/:id" element={<Conduct setActivePage={setActivePage} />} />
           <Route path="update/:id" element={<Update setActivePage={setActivePage} />} />
           <Route path="incidents" element={<Incidents />} />
+          <Route path="delete" element={<Delete/>} />
+          <Route path="staff/:staff_id" element={<StaffRead />} />
+          <Route path="staff-view" element={<StaffView />} />
           <Route path="student-report" element={<StudentReport />} />
+          <Route path="staff-reg" element={<StaffManagement />} />
           <Route path="status/:id" element={<Status setActivePage={setActivePage} />} />
-          <Route path="staff-management" element={<StaffManagement setActivePage={setActivePage} />} />
+          <Route path="staff-setting" element={<StaffSetting setActivePage={setActivePage} />} />
           <Route path="overview" element={<OverView setActivePage={setActivePage} />} />
           <Route path="read/:id" element={<Read />} />
         </Route>

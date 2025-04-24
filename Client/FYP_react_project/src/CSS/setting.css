@@ -1,0 +1,42 @@
+.setting-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;  
+    padding: 0 20px;   
+    background-color: #f4f4f4;
+}
+  
+  .setting-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+  
+ 
+  .setting-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px; 
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 1.1em;
+    color: #333;
+  }
+  
+ 
+  .setting-card:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  

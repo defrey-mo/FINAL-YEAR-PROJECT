@@ -63,6 +63,7 @@ export default function Login({ setIsAuthenticated }) {
       <form onSubmit={handleLogin}>
         <div className="login-box">
           <div className="login-header">
+            <h1>Student's Misconduct And Behaviour System</h1>
             <header className='login-logo'><img src="school_logo.jpg" alt="School Logo" /></header>
           </div>
           <div className="input-box">

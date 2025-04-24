@@ -15,6 +15,26 @@ export default function Dashboard({ setActivePage }) {
   const [incidentCategories, setIncidentCategories] = useState([]);
   const [incidentCounts, setIncidentCounts] = useState([]);
   const [error, setError] = useState(null);
+  const [negativeStudents, setNegativeStudents] = useState([]);
+
+useEffect(() => {
+  const fetchNegativeConductStudents = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:8084/students-with-negative-conduct", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Negative Conduct Students:", response.data);
+      setNegativeStudents(response.data);
+    } catch (error) {
+      console.error("Failed to fetch students with negative conduct:", error);
+    }
+  };
+  fetchNegativeConductStudents();
+}, []);
+
 
   useEffect(() => {
     const fetchStudentCount = async () => {
@@ -163,15 +183,33 @@ export default function Dashboard({ setActivePage }) {
         <div className="charts-card">
           <p>Students with Negative incidents</p>
           <table>
-            <thead>
-              <tr>
-                <th>Student ID</th>
-                <th>Student Names</th>
-                <th>Conduct Type</th>
-                <th>Action taken</th>
-              </tr>
-            </thead>
-          </table>
+  <thead>
+    <tr>
+      <th>Student ID</th>
+      <th>Student Names</th>
+      <th>Conduct Type</th>
+      <th>Nature Of Incident</th>
+      <th>Action taken</th>
+    </tr>
+  </thead>
+  <tbody>
+    {negativeStudents.length === 0 ? (
+      <tr>
+        <td colSpan="5" style={{ textAlign: "center" }}>No students found with negative conduct</td>
+      </tr>
+    ) : (
+      negativeStudents.map((student, index) => (
+        <tr key={index}>
+          <td>{student.student_id}</td>
+          <td>{student.firstname} {student.middlename}</td>
+          <td>{student.type_of_conduct}</td>
+          <td>{student.nature_of_incident}</td>
+          <td>{student.action_taken}</td>
+        </tr>
+      ))
+    )}
+  </tbody>
+</table>
         </div>
       </div>
     </>
