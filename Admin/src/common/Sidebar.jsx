@@ -18,7 +18,7 @@ export default function Sidebar({activePage}) {
         <div className="sidebar-title">
           <div className="sidebar-brand">
           <span className="material-icons-outlined">school</span>
-            StudentTrack
+            SMBS
           </div>
         </div>
         <ul className="sidebar-list">
@@ -36,11 +36,6 @@ export default function Sidebar({activePage}) {
           </li> */}
           <li className={(activePage === "overview")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="overview"><span className="material-icons-outlined">article</span>Overview</Link>
-          </li>
-
-          {/* logout */}
-          <li className="sidebar-list-item" onClick={logoutFunc}>
-            <span className="material-icons-outlined">logout</span>Logout
           </li>
         </ul>
       </div>

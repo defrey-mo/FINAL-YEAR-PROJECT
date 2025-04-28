@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function Navbar() {
@@ -16,6 +18,9 @@ export default function Navbar() {
           <span>ADMINISTRATOR</span>
           
         </div>
+        <button>
+          <FontAwesomeIcon icon={faPowerOff} style={{  }} />
+        </button>
       </div>
     </>
   );

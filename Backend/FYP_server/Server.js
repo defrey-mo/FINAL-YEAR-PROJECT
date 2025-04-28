@@ -332,6 +332,45 @@ app.get("/students/count", authenticateUser, (req, res) => {
   });
 });
 
+app.get("/schools/count", (req, res) => {
+  const sql = "SELECT COUNT(*) AS count FROM schools";
+  console.log("SQL Query:", sql);
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching school count:", err);
+      return res.status(500).json({ error: "Internal Server Error", details: err.message });
+    }
+
+    console.log("Query Result (results):", results);
+
+    if (results && results.length > 0) {
+      res.json({ count: results[0].count });
+    } else {
+      res.json({ count: 0 });
+    }
+  });
+});
+
+app.get("/staff/count", (req, res) => {
+  const sql = "SELECT COUNT(*) AS count FROM staff";
+  console.log("SQL Query:", sql);
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching staff count:", err);
+      return res.status(500).json({ error: "Internal Server Error", details: err.message });
+    }
+
+    console.log("Query Result (results):", results);
+
+    if (results && results.length > 0) {
+      res.json({ count: results[0].count });
+    } else {
+      res.json({ count: 0 });
+    }
+  });
+});
 
 // reading all registered students api
 app.get("/", authenticateUser, (req, res) => {
@@ -562,6 +601,53 @@ app.get('/conduct-details/count', (req, res) => {
     console.error("Error during token processing:", err);
     return res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
+});
+
+
+app.get("/staff/role-counts", (req, res) => {
+  const sql = `
+    SELECT role, COUNT(*) AS count
+    FROM staff
+    GROUP BY role
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching role counts:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/schools/type-counts", (req, res) => {
+  // SQL query to count schools by type and system
+  const sql = `
+    SELECT 
+      school_type, 
+      school_system, 
+      COUNT(*) AS count 
+    FROM schools 
+    GROUP BY school_type, school_system;
+  `;
+
+  console.log("SQL Query:", sql); // You can log the query for debugging purposes
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching school type counts:", err);
+      return res.status(500).json({ error: "Internal Server Error", details: err.message });
+    }
+
+    console.log("Query Result (results):", results); // Check the returned results
+
+    if (results && results.length > 0) {
+      res.json(results); // Send the results as JSON to the frontend
+    } else {
+      res.status(200).json([]); // If no results found, return an empty array
+    }
+  });
 });
 
 

@@ -1,25 +1,107 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../common/Sidebar";
 import Navbar from "../common/Navbar";
 import Chart from "react-apexcharts";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Dashboard({ setActivePage }) {
   setActivePage("dashboard");
 
+  const [schoolCount, setSchoolCount] = useState(null);
+  const [staffCount, setStaffCount] = useState(null);
+  const [error, setError] = useState(null);
+  const [staffRoles, setStaffRoles] = useState([]);
+  const [staffCounts, setStaffCounts] = useState([]);
+  const [schoolTypes, setSchoolTypes] = useState([]);
+  const [schoolCounts, setSchoolCounts] = useState([]);
+
+
+
+  useEffect(() => {
+    const fetchSchoolCount = async () => {
+      try {
+        const response = await axios.get("http://localhost:8084/schools/count");
+        console.log("School Count Response:", response.data); 
+        setSchoolCount(response.data.count); 
+      } catch (error) {
+        console.error("Failed to fetch school count:", error); 
+        setError("Failed to fetch school count");
+      }
+    };
+    fetchSchoolCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchStaffCount = async () => {
+      try {
+        const response = await axios.get("http://localhost:8084/staff/count");
+        console.log("Staff Count Response:", response.data); 
+        setStaffCount(response.data.count); 
+      } catch (error) {
+        console.error("Failed to fetch school count:", error); 
+        setError("Failed to fetch school count");
+      }
+    };
+    fetchStaffCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchStaffRoleCounts = async () => {
+      try {
+        const response = await axios.get("http://localhost:8084/staff/role-counts"); 
+        console.log("Staff Role Counts Response:", response.data);
+  
+        const roles = response.data.map(item => item.role);
+        const counts = response.data.map(item => item.count);
+  
+        setStaffRoles(roles);
+        setStaffCounts(counts);
+      } catch (error) {
+        console.error("Failed to fetch staff role counts:", error);
+        setError("Failed to fetch staff role counts");
+      }
+    };
+  
+    fetchStaffRoleCounts();
+  }, []);
+  
+
+  useEffect(() => {
+    const fetchSchoolTypeCounts = async () => {
+      try {
+        const response = await axios.get("http://localhost:8084/schools/type-counts");
+        console.log("School Type Counts Response:", response.data);
+  
+        const types = response.data.map(item => `${item.school_type} - ${item.school_system}`);
+        const counts = response.data.map(item => item.count);
+  
+        setSchoolTypes(types);
+        setSchoolCounts(counts);
+      } catch (error) {
+        console.error("Failed to fetch school type counts:", error);
+        setError("Failed to fetch school type counts");
+      }
+    };
+  
+    fetchSchoolTypeCounts();
+  }, []);
+  
+  
   const cardsData = [
     {
       title: "Registered Schools",
       ico: "groups",
-      counts: 12250,
+      counts: schoolCount,
       color: "#246dec",
     },
     
     {
       title: "Registered Users",
       ico: "groups",
-      counts: 250,
+      counts: staffCount,
       color: "#367952",
     },
   ];
@@ -28,12 +110,12 @@ export default function Dashboard({ setActivePage }) {
   const areaChartOptions = {
     series: [
       {
-        data: [10, 8, 6, 2, 8]
+        data: schoolCounts
       }
     ],
     option: {
       chart: {
-        type: 'bar',  // Correct placement
+        type: 'bar',
         height: 350,
         toolbar: {
           show: false
@@ -44,7 +126,7 @@ export default function Dashboard({ setActivePage }) {
         "#cc3c43",
         "#367952",
         "#f5b74f",
-        "#4f35a1"  
+        "#4f35a1" 
       ],
       plotOptions: {
         bar: {
@@ -62,7 +144,7 @@ export default function Dashboard({ setActivePage }) {
         show: false
       },
       xaxis: {
-        categories: ["2023", "2022", "2021", "2020", "2019"],
+        categories: schoolTypes
       },
       yaxis: {
         title: {
@@ -75,12 +157,12 @@ export default function Dashboard({ setActivePage }) {
   const someChartOptions = {
     series: [
       {
-        data: [10, 8, 6]
+        data: staffCounts
       }
     ],
     option: {
       chart: {
-        type: 'bar',  // Correct placement
+        type: 'bar',
         height: 350,
         toolbar: {
           show: false
@@ -89,7 +171,9 @@ export default function Dashboard({ setActivePage }) {
       colors: [
         "#246dec",
         "#cc3c43",
-        "#367952"  
+        "#367952",
+        "#f5b74f",
+        "#4c49ea" // add more if needed
       ],
       plotOptions: {
         bar: {
@@ -107,7 +191,7 @@ export default function Dashboard({ setActivePage }) {
         show: false
       },
       xaxis: {
-        categories: ["Admin", "Registrars", "Teachers"],
+        categories: staffRoles
       },
       yaxis: {
         title: {
@@ -116,6 +200,7 @@ export default function Dashboard({ setActivePage }) {
       }
     }
   };
+  
   
   return (
     <>

@@ -32,7 +32,7 @@ export default function Sidebar({activePage}) {
         <div className="sidebar-title">
           <div className="sidebar-brand">
           <span className="material-icons-outlined">school</span>
-            StudentTrack
+            SMBS
           </div>
         </div>
         <ul className="sidebar-list">
