@@ -55,7 +55,7 @@ export default function Conduct() {
   const positiveIncidents = [
     "Respectfulness",
     "Leadership",
-    "Helping Others"
+    "Helping"
   ];
 
   const negativeIncidents = [
