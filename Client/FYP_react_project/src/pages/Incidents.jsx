@@ -61,7 +61,7 @@ export default function Incidents() {
             <th>Student ID</th>
             <th>First Name</th>
             <th>Last name</th>
-            <th>Registration Status</th>
+            <th>Perfomance Status</th>
             <th>Fee Payment Status</th>
             <th>Conduct Type</th>
             <th>Nature Of Incident</th>

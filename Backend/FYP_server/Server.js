@@ -8,7 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
+  connectionLimit: 10,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -67,60 +68,143 @@ function authorizedRoles(allowedRoles) {
   };
 }
 
-app.post("/report", (req, res) => {
-  const { student_id } = req.body;
+// app.post("/report", (req, res) => {
+//   const { student_id } = req.body;
 
-  if (!student_id) {
-    return res.status(400).json({ message: "Student number is required" });
-  }
+//   if (!student_id) {
+//     return res.status(400).json({ message: "Student number is required" });
+//   }
 
-  const sql = `
-    SELECT s.*, st.*, c.*
-    FROM students s
-    LEFT JOIN status st ON s.student_id = st.student_id
-    LEFT JOIN conduct c ON s.student_id = c.student_id
-    WHERE s.student_id = ?
-  `;
+//   const sql = `
+//     SELECT s.*, st.*, c.*
+//     FROM students s
+//     LEFT JOIN status st ON s.student_id = st.student_id
+//     LEFT JOIN conduct c ON s.student_id = c.student_id
+//     WHERE s.student_id = ?
+//   `;
 
-  db.query(sql, [student_id], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+//   db.query(sql, [student_id], (err, results) => {
+//     if (err) return res.status(500).json({ error: err.message });
 
-    if (results.length === 0) {
-      return res.status(404).json({ message: "Student not found" });
-    }
+//     if (results.length === 0) {
+//       return res.status(404).json({ message: "Student not found" });
+//     }
 
-    res.json(results);
-  });
-});
+//     res.json(results);
+//   });
+// });
 
-app.get("/report/:student_id", (req, res) => {
+// app.post("/report", (req, res) => {
+//   const { student_id } = req.body;
+
+//   if (!student_id) {
+//     return res.status(400).json({ message: "student_id is required" });
+//   }
+
+//   console.log(`Received student report for ID: ${student_id}`);
+
+//   // You could log it, trigger an action, or just respond
+//   return res.status(200).json({
+//     message: `Report received for student_id: ${student_id}`,
+//   });
+// });
+
+app.get("/active/:student_id", (req, res) => {
   const { student_id } = req.params;
 
   if (!student_id) {
-    return res.status(400).json({ message: "Student number is required" });
+    return res.status(400).json({ message: "Student ID is required" });
   }
 
-  const sql = `
-    SELECT s.*, st.*, c.*
+  const activeSql = `
+    SELECT
+      s.student_id AS student_id,
+      s.firstname AS firstname,
+      s.middlename AS middlename,
+      s.surname AS surname,
+      s.dob AS dob,
+      s.gender AS gender,
+      s.medical_info AS medical_info,
+      st.registration_status AS registration_status,
+      st.peer_relationship AS peer_relationship,
+      st.fee_payment_status AS fee_payment_status,
+      st.guardian_contact AS guardian_contact,
+      c.type_of_conduct AS type_of_conduct,
+      c.nature_of_incident AS nature_of_incident,
+      c.detailed_description AS detailed_description,
+      c.action_taken AS action_taken
     FROM students s
     LEFT JOIN status st ON s.student_id = st.student_id
     LEFT JOIN conduct c ON s.student_id = c.student_id
     WHERE s.student_id = ?
   `;
 
-  db.query(sql, [student_id], (err, results) => {
+  db.query(activeSql, [student_id], (err, results) => {
     if (err) {
-      console.error("Database error:", err);
+      console.error("Database error (active):", err);
       return res.status(500).json({ error: err.message });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ message: "Student not found" });
+      return res.status(404).json({ message: "Active student not found" });
     }
-
-    res.json(results);
+    res.json({ source: "active", data: results });
   });
 });
+
+app.get("/inactive/:student_id", (req, res) => {
+  const { student_id } = req.params;
+
+  if (!student_id) {
+    return res.status(400).json({ message: "Student ID is required" });
+  }
+
+  const deletedSql = `
+  SELECT
+    ds.student_id AS student_id,
+    ds.firstname AS firstname,
+    ds.middlename AS middlename,
+    ds.surname AS surname,
+    ds.dob AS dob,
+    ds.gender AS gender,
+    ds.medical_info AS medical_info,
+    dst.registration_status AS registration_status,
+    dst.peer_relationship AS peer_relationship,
+    dst.fee_payment_status AS fee_payment_status,
+    dst.guardian_contact AS guardian_contact,
+    dc.type_of_conduct AS type_of_conduct,
+    dc.nature_of_incident AS nature_of_incident,
+    dc.detailed_description AS detailed_description,
+    dc.action_taken AS action_taken
+  FROM deleted_students ds
+  LEFT JOIN deleted_status dst ON ds.student_id = dst.student_id
+  LEFT JOIN deleted_conduct dc ON ds.student_id = dc.student_id
+  WHERE BINARY ds.student_id = ?
+`;
+
+
+  db.query(deletedSql, [student_id], (err, results) => {
+    if (err) {
+      console.error("Database error (deleted):", err);
+      return res.status(500).json({
+        error: "Internal Server Error. Could not fetch deleted student data.",
+        details: err.message
+      });
+    }
+
+    console.log("Deleted student query result:", results);
+
+    // Check only if the base student data exists (from deleted_students)
+    const found = results.some(row => row.student_id);
+
+    if (!found) {
+      return res.status(404).json({ message: "Deleted student not found" });
+    }
+
+    res.json({ source: "deleted", data: results });
+  });
+});
+
 
 
 app.post("/schools", (req, res) => {
@@ -652,26 +736,42 @@ app.get("/schools/type-counts", (req, res) => {
 
 
 app.post("/conduct", (req, res) => {
-  const sql =
-    "INSERT INTO conduct (student_id, type_of_conduct, nature_of_incident, detailed_description, action_taken, teacher_staff_report, witness) VALUES (" +
-    `'${req.body.student_id}',
-    '${req.body.type_of_conduct}',
-    '${req.body.nature_of_incident}',
-    '${req.body.detailed_description}',
-    '${req.body.action_taken}',
-    '${req.body.teacher_staff_report}',
-    '${req.body.witness}'
-  );`;
-  db.query(sql, (err, result) => {
+  const {
+    student_id,
+    type_of_conduct,
+    nature_of_incident,
+    detailed_description,
+    action_taken,
+    teacher_staff_report,
+    witness
+  } = req.body;
+
+  const sql = `
+    INSERT INTO conduct (
+      student_id, type_of_conduct, nature_of_incident,
+      detailed_description, action_taken, teacher_staff_report, witness
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [
+    student_id,
+    type_of_conduct,
+    nature_of_incident,
+    detailed_description,
+    action_taken,
+    teacher_staff_report,
+    witness
+  ];
+
+  db.query(sql, values, (err, result) => {
     if (err) {
+      console.error("DB Error:", err); // log detailed error
       return res.status(500).json({ error: err.message });
     }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Student not found" });
-    }
-    return res.json({ message: "Student conduct updated successfully", result: result });
+    return res.json({ message: "Student conduct recorded successfully", result });
   });
 });
+
 
 app.post("/status", (req, res) => {
   const {
@@ -683,44 +783,6 @@ app.post("/status", (req, res) => {
     peer_relationship,
     guardian_contact
   } = req.body;
-
-  // Map frontend values to backend ENUM values
-  const registrationStatusMap = {
-    positive: 'Fully Registered',
-    negative: 'Pending',
-    never: 'Not Registered',
-  };
-
-  const feePaymentStatusMap = {
-    positive: 'Fully Paid',
-    negative: 'Partially Paid',
-    never: 'Not Paid',
-  };
-
-  const scholarshipFinancialAidMap = {
-    positive: 'Yes',
-    negative: 'No',
-  };
-
-  const emotionalWellbeingMap = {
-    vw: 'Happy',
-    ww: 'Stressed',
-    pn: 'Anxious',
-    dete: 'Depressed',
-  };
-
-  const peerRelationshipMap = {
-    positive: 'Good',
-    negative: 'Average',
-    never: 'Poor',
-  };
-
-  // Map values
-  const mappedRegistrationStatus = registrationStatusMap[registration_status] || registration_status;
-  const mappedFeePaymentStatus = feePaymentStatusMap[fee_payment_status] || fee_payment_status;
-  const mappedScholarshipFinancialAid = scholarshipFinancialAidMap[scholarship_financial_aid] || scholarship_financial_aid;
-  const mappedEmotionalWellbeing = emotionalWellbeingMap[emotional_wellbeing] || emotional_wellbeing;
-  const mappedPeerRelationship = peerRelationshipMap[peer_relationship] || peer_relationship;
 
   const sql = `
     INSERT INTO status (
@@ -739,11 +801,11 @@ app.post("/status", (req, res) => {
 
   db.query(sql, [
     student_id,
-    mappedRegistrationStatus,
-    mappedFeePaymentStatus,
-    mappedScholarshipFinancialAid,
-    mappedEmotionalWellbeing,
-    mappedPeerRelationship,
+    registration_status,
+    fee_payment_status,
+    scholarship_financial_aid,
+    emotional_wellbeing,
+    peer_relationship,
     guardian_contact
   ], (err, result) => {
     if (err) {
@@ -753,6 +815,7 @@ app.post("/status", (req, res) => {
     return res.json({ message: "Student status inserted or updated successfully", result });
   });
 });
+
 
 app.get("/conduct-details/nature-counts", (req, res) => {
   // Check if the Authorization header is present and starts with 'Bearer '
@@ -864,6 +927,101 @@ app.get('/students/ids', (req, res) => {
       res.json(ids);
   });
 });
+
+app.delete("/delete/:id", (req, res) => {
+  const student_id = req.params.id;
+  console.log("Received DELETE for student_id:", student_id);
+
+  if (!student_id) {
+    return res.status(400).json({ error: "student_id is required." });
+  }
+
+  // Get a connection from the pool
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting DB connection:", err);
+      return res.status(500).json({ error: "Database connection failed." });
+    }
+
+    // Start the transaction
+    connection.beginTransaction((err) => {
+      if (err) {
+        connection.release();
+        console.error("Transaction start failed:", err);
+        return res.status(500).json({ error: "Transaction start failed." });
+      }
+
+      // Step 1: Backup student data
+      const backupStudent = `
+        INSERT INTO deleted_students
+        (student_id, firstname, school_id, middlename, surname, dob, gender, medical_info, guardian_fullnames, guardian_phone, guardian_email, home_address, prev_school)
+        SELECT student_id, firstname, school_id, middlename, surname, dob, gender, medical_info, guardian_fullnames, guardian_phone, guardian_email, home_address, prev_school
+        FROM students WHERE student_id = ?
+      `;
+      connection.query(backupStudent, [student_id], (err) => {
+        if (err) return rollback(err);
+
+        // Step 2: Backup and delete status data
+        const backupStatus = `
+          INSERT INTO deleted_status 
+          (student_id, registration_status, fee_payment_status, scholarship_financial_aid, emotional_wellbeing, peer_relationship, guardian_contact)
+          SELECT student_id, registration_status, fee_payment_status, scholarship_financial_aid, emotional_wellbeing, peer_relationship, guardian_contact
+          FROM status WHERE student_id = ?
+        `;
+        const deleteStatus = `DELETE FROM status WHERE student_id = ?`;
+
+        connection.query(backupStatus, [student_id], (err) => {
+          if (err) return rollback(err);
+
+          connection.query(deleteStatus, [student_id], (err) => {
+            if (err) return rollback(err);
+
+            // Step 3: Backup and delete conduct data
+            const backupConduct = `
+              INSERT INTO deleted_conduct 
+              (student_id, type_of_conduct, nature_of_incident, detailed_description, action_taken, teacher_staff_report, witness)
+              SELECT student_id, type_of_conduct, nature_of_incident, detailed_description, action_taken, teacher_staff_report, witness
+              FROM conduct WHERE student_id = ?
+            `;
+            const deleteConduct = `DELETE FROM conduct WHERE student_id = ?`;
+
+            connection.query(backupConduct, [student_id], (err) => {
+              if (err) return rollback(err);
+
+              connection.query(deleteConduct, [student_id], (err) => {
+                if (err) return rollback(err);
+
+                // Finally, delete the student record
+                const deleteStudent = `DELETE FROM students WHERE student_id = ?`;
+
+                connection.query(deleteStudent, [student_id], (err) => {
+                  if (err) return rollback(err);
+
+                  // Commit the transaction
+                  connection.commit((err) => {
+                    if (err) return rollback(err);
+                    connection.release();
+                    res.status(200).json({ message: "Student and related records deleted and backed up successfully." });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+
+      // Rollback function in case of error
+      function rollback(error) {
+        connection.rollback(() => {
+          connection.release();
+          console.error("Rollback due to error:", error);
+          res.status(500).json({ error: "An error occurred during deletion and backup.", detail: error.message });
+        });
+      }
+    });
+  });
+});
+
 
 app.listen(8084, () => {
   console.log("The server is working");

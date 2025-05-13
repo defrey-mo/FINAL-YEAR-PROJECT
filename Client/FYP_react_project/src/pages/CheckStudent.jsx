@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../CSS/check.css";
 
 export default function CheckStudent({ setActivePage }) {
@@ -11,7 +9,7 @@ export default function CheckStudent({ setActivePage }) {
 
   setActivePage("check-student");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!student_id.trim()) {
@@ -21,19 +19,8 @@ export default function CheckStudent({ setActivePage }) {
 
     setError(""); // Reset error message
 
-    try {
-      // Send the student number to the backend to fetch the report
-      const response = await axios.post("http://localhost:8084/report", { student_id });
-
-      // If the student exists, navigate to the report page
-      if (response.data) {
-        navigate("/system/student-report", { state: { student_id } });
-      } else {
-        setError("Student number not found in the database.");
-      }
-    } catch (err) {
-      setError("Student number not found in the database.");
-    }
+    // Directly navigate to the student report page, passing the student_id
+    navigate("/system/student-report", { state: { student_id } });
   };
 
   return (

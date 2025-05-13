@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -47,7 +46,7 @@ export default function Conduct() {
     try {
       await axios.request(requestConfig2);
       console.log("Form submitted successfully");
-      // navigate('/system/overview');
+      navigate('/system/overview');
     } catch (error) {
       console.error("Error submitting form", error);
     }
@@ -74,15 +73,16 @@ export default function Conduct() {
                             />
                         </span>
                         <span>
-                        <label htmlFor="type-of-conduct">Registration Status</label>
+                        <label htmlFor="type-of-conduct">Perfomance Status</label>
                         <select name="toc" id="toc"
                           onChange={(e) => setValues({ ...values, registration_status: e.target.value })}
                           value={values.registration_status}
                         >
-                            <option value="">--Enter registration status--</option>
-                            <option value="positive">Fully Registered</option>
-                            <option value="negative">Pending</option>
-                            <option value="never">Not Registered</option>
+                            <option>--Enter Students Perfomance--</option>
+                            <option>Very Good</option>
+                            <option>Good</option>
+                            <option>Poor</option>
+                            <option>Very Poor</option>
                         </select>
                         </span>
                         <span>
@@ -91,9 +91,9 @@ export default function Conduct() {
                           onChange={(e) => setValues({ ...values, fee_payment_status: e.target.value })}
                           value={values.fee_payment_status}
                         >   <option value="">--Enter payment status--</option>
-                            <option value="positive">Fully Paid</option>
-                            <option value="negative">Partially Paid</option>
-                            <option value="never">Not Paid</option>
+                            <option>Fully Paid</option>
+                            <option>Partially Paid</option>
+                            <option>Not Paid</option>
                         </select>
                         </span>
                         <span>
@@ -103,8 +103,8 @@ export default function Conduct() {
                           value={values.scholarship_financial_aid}
                         >
                             <option value="">--Enter scholarship status--</option>
-                            <option value="positive">Yes</option>
-                            <option value="negative">No</option>
+                            <option>Yes</option>
+                            <option>No</option>
                         </select>
                         </span>
                         <span>
@@ -113,11 +113,11 @@ export default function Conduct() {
                           onChange={(e) => setValues({ ...values, emotional_wellbeing: e.target.value })}
                           value={values.emotional_wellbeing}
                         >
-                            <option value="">--Enter wellbeing--</option>
-                            <option value="vw">Happy</option>
-                            <option value="ww">Stressed</option>
-                            <option value="pn">Anxious</option>
-                            <option value="dete">Depressed</option>
+                            <option>--Enter wellbeing--</option>
+                            <option>Happy</option>
+                            <option>Stressed</option>
+                            <option>Anxious</option>
+                            <option>Depressed</option>
                         </select>
                         </span>
                         <span>
@@ -127,9 +127,9 @@ export default function Conduct() {
                           value={values.peer_relationship}
                         >
                             <option value="">--Enter peer status--</option>
-                            <option value="positive">Good</option>
-                            <option value="negative">Average</option>
-                            <option value="never">Poor</option>
+                            <option>Good</option>
+                            <option>Average</option>
+                            <option>Poor</option>
                         </select>
                         </span>
                         <span>

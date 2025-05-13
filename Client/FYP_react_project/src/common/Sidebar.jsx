@@ -36,7 +36,7 @@ export default function Sidebar({activePage}) {
           </div>
         </div>
         <ul className="sidebar-list">
-          {(role === "Admin" || role === "Registrar") && (
+          {role === "Admin"&& (
             <li className={(activePage === "dashboard")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="dashboard"><span className="material-icons-outlined">dashboard</span>Dashboard</Link>
           </li>

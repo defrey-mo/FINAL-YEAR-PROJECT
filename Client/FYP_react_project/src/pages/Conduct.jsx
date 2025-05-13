@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@ export default function Conduct() {
 
   const [values, setValues] = useState({
     student_id: id,
-    type_of_conduct: "--Select Type--",
+    type_of_conduct: "",
     nature_of_incident: "Bullying",
     detailed_description: "",
     action_taken: "Verbal Warning",
@@ -46,7 +45,7 @@ export default function Conduct() {
     try {
       await axios.request(requestConfig);
       console.log("Form submitted successfully");
-      // navigate('/system/overview');
+      navigate('/system/overview');
     } catch (error) {
       console.error("Error submitting form", error);
     }
@@ -62,7 +61,9 @@ export default function Conduct() {
     "Bullying",
     "Disruptive Behaviour",
     "Cheating Exams",
-    "Inciting Strike"
+    "Inciting Strike",
+    "Rape",
+    "Homosexuallity"
   ];
 
   const getIncidentOptions = () => {

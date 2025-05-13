@@ -180,36 +180,40 @@ useEffect(() => {
           <p className="chart-title">REPORTED INCIDENTS</p>
           <Chart type="bar" height={incidentChartOptions.option.height} options={incidentChartOptions.option} series={incidentChartOptions.series} />
         </div>
-        <div className="charts-card">
+          <div className="charts-card">
           <p>Students with Negative incidents</p>
-          <table>
-  <thead>
-    <tr>
-      <th>Student ID</th>
-      <th>Student Names</th>
-      <th>Conduct Type</th>
-      <th>Nature Of Incident</th>
-      <th>Action taken</th>
-    </tr>
-  </thead>
-  <tbody>
-    {negativeStudents.length === 0 ? (
-      <tr>
-        <td colSpan="5" style={{ textAlign: "center" }}>No students found with negative conduct</td>
-      </tr>
-    ) : (
-      negativeStudents.map((student, index) => (
-        <tr key={index}>
-          <td>{student.student_id}</td>
-          <td>{student.firstname} {student.middlename}</td>
-          <td>{student.type_of_conduct}</td>
-          <td>{student.nature_of_incident}</td>
-          <td>{student.action_taken}</td>
-        </tr>
-      ))
-    )}
-  </tbody>
-</table>
+           <div className="negative-table-container">
+
+            <table className="negative-table">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Names</th>
+                <th>Conduct Type</th>
+                <th>Nature Of Incident</th>
+                <th>Action taken</th>
+              </tr>
+            </thead>
+            <tbody>
+              {negativeStudents.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>No students found with negative conduct</td>
+                </tr>
+              ) : (
+                negativeStudents.map((student, index) => (
+                  <tr key={index}>
+                    <td>{student.student_id}</td>
+                    <td>{student.firstname} {student.middlename}</td>
+                    <td>{student.type_of_conduct}</td>
+                    <td>{student.nature_of_incident}</td>
+                    <td>{student.action_taken}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+           </div>
+          
         </div>
       </div>
     </>

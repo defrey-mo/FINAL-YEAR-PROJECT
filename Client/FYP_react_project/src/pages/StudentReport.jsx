@@ -6,74 +6,80 @@ import "../CSS/studentReport.css";
 export default function StudentReport() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [reportData, setReportData] = useState([]);
+  const [studentData, setStudentData] = useState([]);
+  const [recordSource, setRecordSource] = useState(null);
   const [error, setError] = useState("");
-
-  // Get student number from location state (passed from CheckStudent)
   const student_id = location.state?.student_id;
 
   useEffect(() => {
     if (!student_id) {
-      navigate("/"); // Navigate back to CheckStudent if no student number
+      navigate("/");
       return;
     }
 
-    const fetchReport = async () => {
+    const fetchReports = async () => {
       try {
-        // Make a GET request to fetch report data using student number
-        const res = await axios.get(`http://localhost:8084/report/${student_id}`);
-
-        if (res.data.length === 0) {
-          setError("Student number not found in the database.");
-        } else {
-          setReportData(res.data); // Set report data
-        }
+        // Fetch from active records
+        const activeRes = await axios.get(`http://localhost:8084/active/${student_id}`);
+        setStudentData(activeRes.data.data);
+        setRecordSource("active");
       } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Error fetching report.");
+        if (err.response && err.response.status === 404) {
+          // Not found in active, try deleted
+          try {
+            const deletedRes = await axios.get(`http://localhost:8084/inactive/${student_id}`);
+            setStudentData(deletedRes.data.data);
+            setRecordSource("deleted");
+          } catch (delErr) {
+            if (delErr.response?.status === 404) {
+              setError("Student not found in both active and deleted records.");
+            } else {
+              setError("Error fetching deleted student data.");
+            }
+          }
+        } else {
+          setError("Error fetching active student data.");
+        }
       }
     };
 
-    fetchReport();
+    fetchReports();
   }, [student_id, navigate]);
 
-  if (!student_id) return null; // Prevent rendering if no student number
+  if (!student_id) return null;
+  if (error) return <div className="report-page"><p style={{ color: "red" }}>{error}</p></div>;
+  if (!studentData.length) return <div className="report-page">Loading...</div>;
+
+  const studentInfo = studentData[0]; // Use first row for static info
 
   return (
     <div className="report-page">
       <h1>Student Report</h1>
+      <p><strong>Record Source:</strong> {recordSource === "deleted" ? "Deleted Records" : "Active Records"}</p>
 
-      {error && <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>}
+      <h2>Student Info</h2>
+      <p><strong>Full Name:</strong> {studentInfo.firstname} {studentInfo.middlename} {studentInfo.surname || "N/A"}</p>
+      <p><strong>Date of Birth:</strong> {studentInfo.dob || "N/A"}</p>
+      <p><strong>Gender:</strong> {studentInfo.gender || "N/A"}</p>
+      <p><strong>Medical Info:</strong> {studentInfo.medical_info || "N/A"}</p>
 
-      {reportData.length > 0 && (
-        <div className="report">
-          <h2>Student Info</h2>
-          <p><strong>Full Name:</strong> {reportData[0].firstname} {reportData[0].middlename} {reportData[0].surname}</p>
-          <p><strong>Date of birth:</strong> {reportData[0].dob}</p>
-          <p><strong>Gender:</strong> {reportData[0].gender}</p>
-          <p><strong>Medical Info:</strong> {reportData[0].medical_info}</p>
+      <h2>Status Records</h2>
+      <p><strong>Registration Status:</strong> {studentInfo.registration_status || "N/A"}</p>
+      <p><strong>Peer Relationship:</strong> {studentInfo.peer_relationship || "N/A"}</p>
+      <p><strong>Fee Payment Status:</strong> {studentInfo.fee_payment_status || "N/A"}</p>
+      <p><strong>Guardian Contact:</strong> {studentInfo.guardian_contact || "N/A"}</p>
 
-          
-          <h2>Conduct Records</h2>
-            {reportData.map((record, index) => (
-              <div key={index} className="conduct-entry">
-                <h3>Incident {index + 1}</h3>
-                <p><strong>Type of Conduct:</strong> {record.type_of_conduct}</p>
-                <p><strong>Nature of Incident:</strong> {record.nature_of_incident}</p>
-                <p><strong>Description of incident:</strong> {record.detailed_description}</p>
-                <p><strong>Action Taken:</strong> {record.action_taken}</p>
-                <hr />
-              </div>
-            ))} 
-
-          <h2>Status Records</h2>
-          <p><strong>Registration status:</strong> {reportData[0].registration_status}</p>
-          <p><strong>Peer Relationship:</strong> {reportData[0].peer_relationship}</p>
-          <p><strong>Fee payment status:</strong> {reportData[0].fee_payment_status}</p>
-          <p><strong>Guardian Contact:</strong> {reportData[0].guardian_contact}</p>
-          
+      <h2>Conduct Records</h2>
+      {studentData.map((record, index) => (
+        <div key={index} className="conduct-entry">
+          <h3>Incident {index + 1}</h3>
+          <p><strong>Type of Conduct:</strong> {record.type_of_conduct || "N/A"}</p>
+          <p><strong>Nature of Incident:</strong> {record.nature_of_incident || "N/A"}</p>
+          <p><strong>Description of Incident:</strong> {record.detailed_description || "N/A"}</p>
+          <p><strong>Action Taken:</strong> {record.action_taken || "N/A"}</p>
+          <hr />
         </div>
-      )}
+      ))}
     </div>
   );
 }

@@ -202,7 +202,6 @@ export default function CheckStudent({ setActivePage }) {
                     id="role"
                   >
                     <option value="admin">Admin</option>
-                    <option value="registrar">Registrar</option>
                     <option value="teacher">Teacher</option>
                   </select>
                 </span>
