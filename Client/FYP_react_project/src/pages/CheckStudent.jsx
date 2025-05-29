@@ -17,7 +17,7 @@ export default function CheckStudent({ setActivePage }) {
       return;
     }
 
-    setError(""); // Reset error message
+    setError("");
 
     // Directly navigate to the student report page, passing the student_id
     navigate("/system/student-report", { state: { student_id } });

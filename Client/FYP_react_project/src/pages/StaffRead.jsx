@@ -19,8 +19,8 @@ export default function StaffRead() {
         <div className='reading-students'>
 
         <h2>Staff Details</h2>
-        <h3>STAFF NUMBER:  {staff.staff_id}</h3>
-        <h3>FIRST NAME:  {staff.firstname}</h3>
+        <p>STAFF NUMBER:  {staff.staff_id}</p>
+        <p>FIRST NAME:  {staff.firstname}</p>
     </div>
     </div>
   )

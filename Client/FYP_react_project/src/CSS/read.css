@@ -11,7 +11,6 @@ overflow-y: scroll;
 }
 
 .reading-students h2{
-  position: sticky;
   margin-left: 300px;
   margin-top: 10px;
   top: 0;

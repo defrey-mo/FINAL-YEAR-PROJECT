@@ -865,15 +865,23 @@ app.get("/conduct-details/nature-counts", (req, res) => {
 });
 
 
-app.get("/read/:id", (req, res) => {
-  const sql = "SELECT * FROM students WHERE student_id = ?";
+app.get("/staff-reading/:id", (req, res) => {
+  const sql = `
+    SELECT 
+      students.*,
+      status.*,
+      conduct.*
+    FROM students
+    LEFT JOIN status ON students.student_id = status.student_id
+    LEFT JOIN conduct ON students.student_id = conduct.student_id
+    WHERE students.student_id = ?
+  `;
   const id = req.params.id;
   db.query(sql,[id], (err, result) => {
     if (err) return res.json({ Message: "Error on server" });
     return res.json(result);
   });
 });
-
 app.get("/staff-read/:id", (req, res) => {
   const sql = "SELECT * FROM staff WHERE staff_id = ?";
   const id = req.params.id;
