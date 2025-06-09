@@ -1,9 +1,9 @@
 body{
   display: flex;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
   background: #dfdfdf;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;;
 }
 .login-box{
   display: flex;
@@ -12,7 +12,9 @@ body{
   width: 440px;
   height: 480px;
   padding: 30px;
+  margin-left: 50px;
 }
+
 .login-header{
   text-align: center;
   margin: 20px 0 40px 0;
@@ -35,6 +37,11 @@ body{
   transition: .3s;
 }
 
+.app-name{
+  background-color: green;
+  color: white;
+}
+
 .login-logo img{
   height: 200px;
   margin-left: 10px;
@@ -47,11 +54,7 @@ body{
 .input-field:focus{
   width: 105%;
 }
-.forgot{
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 40px;
-}
+
 section{
   display: flex;
   align-items: center;
@@ -76,7 +79,7 @@ section a{
 .submit-btn{
   width: 100%;
   height: 60px;
-  background: #222;
+  background: green;
   margin-left: 20px;
   border: none;
   border-radius: 30px;

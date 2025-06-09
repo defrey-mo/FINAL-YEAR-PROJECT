@@ -31,7 +31,7 @@ export default function Sidebar({activePage}) {
       <div className="aside">
         <div className="sidebar-title">
           <div className="sidebar-brand">
-          <span className="material-icons-outlined">school</span>
+          <span className="material-icons-outlined school-icon">school</span>
             SMBS
           </div>
         </div>

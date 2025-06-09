@@ -25,7 +25,7 @@ export default function CheckStudent({ setActivePage }) {
 
   return (
     <div className="checking">
-      <h1 className="checkin">Check Student</h1>
+      <div className="checkin"><h1>Check Student</h1></div>
       <form onSubmit={handleSubmit}>
         <span>
           <label htmlFor="student-number">Student Number</label>

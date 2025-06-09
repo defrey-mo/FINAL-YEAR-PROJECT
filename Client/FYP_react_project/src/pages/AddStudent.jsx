@@ -4,9 +4,13 @@ import "../CSS/add.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { decode } from 'js-base64'; // Import the decode function from js-base64 library
+import SuccessBox from "../components/SuccessBox"
+import ErrorBox from "../components/ErrorBox";
 
 export default function AddStudent({ setActivePage }) {
-    setActivePage("add-student");
+     useEffect(() => {
+        setActivePage("add-student");
+    }, [setActivePage]);
 
     // State variables to store form input values
     const [student_id, setstudent_id] = useState("");
@@ -23,6 +27,8 @@ export default function AddStudent({ setActivePage }) {
     const [prev_school, setprev_school] = useState("");
     const [existingStudentIds, setExistingStudentIds] = useState([]);
     const [loading, setLoading] = useState(true); // State to manage loading state
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
 
     const navigate = useNavigate(); // Hook to navigate between routes
 
@@ -134,10 +140,13 @@ export default function AddStudent({ setActivePage }) {
                 .request(requestConfig)
                 .then((res) => {
                     console.log(res);
-                    navigate("/system/overview"); // Redirect to overview page
+                    setShowSuccess(true);
+                    setShowError(false);
                 })
-                .catch((err) => {
-                    console.error("Error:", err.response.data);
+                .catch((err) => {                    
+                    setShowError(true);
+                    setShowSuccess(false);
+                    console.error("Error:", err.response?.data);
                 });
         } catch (error) {
             // Handle errors during token decoding
@@ -325,6 +334,21 @@ export default function AddStudent({ setActivePage }) {
           </form>
         </div>
       </div>
+      {showSuccess && (
+        <SuccessBox
+          message="Student registered successfully!"
+          onClose={() => setShowSuccess(false)}
+          onConfirm={() => navigate("/system/overview")}
+        />
+      )}
+
+      {showError && (
+        <ErrorBox
+          message="Registration failed! Please try again."
+          onClose={() => setShowError(false)}
+          duration={10000}
+        />
+      )}
     </>
   );
 }

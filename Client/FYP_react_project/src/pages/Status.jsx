@@ -1,11 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import SuccessBox from "../components/SuccessBox"
+import ErrorBox from "../components/ErrorBox";
 
 
 export default function Conduct() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const [values, setValues] = useState({
     student_id: id,
@@ -46,8 +50,11 @@ export default function Conduct() {
     try {
       await axios.request(requestConfig2);
       console.log("Form submitted successfully");
-      navigate('/system/overview');
+      setShowSuccess(true);
+      setShowError(false);
     } catch (error) {
+      setShowError(true);
+      setShowSuccess(false);
       console.error("Error submitting form", error);
     }
   };
@@ -149,6 +156,21 @@ export default function Conduct() {
                 </div>
               </div>
             </div>
+            {showSuccess && (
+        <SuccessBox
+          message="Student updated successfully!"
+          onClose={() => setShowSuccess(false)}
+          onConfirm={() => navigate("/system/overview")}
+        />
+      )}
+
+      {showError && (
+        <ErrorBox
+          message="Update failed! Please try again."
+          onClose={() => setShowError(false)}
+          duration={10000}
+        />
+      )}
     </div>
   )
 }

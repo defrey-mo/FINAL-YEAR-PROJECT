@@ -8,11 +8,48 @@ import { Link } from "react-router-dom";
 export default function OverView({ students, fetchStudents, setActivePage }) {
   setActivePage("overview");
     const [data, setData] = useState ([])
+    const [showModal, setShowModal] = useState(false);
+    const [schoolToDelete, setSchoolToDelete] = useState(null);
+
   useEffect(() => {
     axios.get('http://localhost:8084/readschools')
     .then(res => setData(res.data))
     .catch(err => console.log(err));
   }, [])
+
+  const deleteSchool = (studentId, event) => {
+      event.stopPropagation();
+      setSchoolToDelete(studentId);
+      setShowModal(true);
+    };
+  
+    const confirmDeletion = () => {
+
+  
+      axios
+        .delete(`http://localhost:8084/delete-school/${schoolToDelete}`, {
+        })
+        .then(() => {
+          // Update local data to reflect deletion
+          const updatedData = data.filter(school => school.school_id !== schoolToDelete);
+          setData(updatedData);
+  
+          // Close the modal and reset state
+          setShowModal(false);
+          setSchoolToDelete(null);
+          alert("School deleted successfully");
+        })
+        .catch((err) => {
+          console.error("Error deleting school:", err);
+          alert("An error occurred while deleting the school.");
+        });
+    };
+  
+    const cancelDeletion = () => {
+      setShowModal(false);
+      setSchoolToDelete(null);
+    };
+  
 
   return (
     <div>
@@ -40,9 +77,9 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
             <td>{schools.phone_number}</td>
             <td>{schools.physical_address}</td>
             <td>
-              <Link to={`/system/read/${schools.student_id}`} className='read'>Read</Link>
+              <Link to={`/system/read/${schools.school_id}`} className='read'>Read</Link>
               <Link to={`/system/update/${schools.school_id}`} className="update">Update</Link>
-              <button className="delete">Delete</button>
+              <button className="delete" onClick={(event) => deleteSchool(schools.school_id, event)}>Delete</button>
             </td>
           </tr>}
           
@@ -50,6 +87,17 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
         
         </tbody>
       </table>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <p>Are you sure you want to delete this school? </p>
+            <div className="modal-buttons">
+              <button onClick={confirmDeletion}>Yes, Delete</button>
+              <button onClick={cancelDeletion}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

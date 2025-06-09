@@ -34,26 +34,36 @@ function authenticateUser(req, res, next) {
 }
 // JWT Verification Middleware
 const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"]?.split(" ")[1]; // Extract the token from the Authorization header
+  // Extract the token from the Authorization header
+  const token = req.headers["authorization"]?.split(" ")[1];
 
+  // If token is missing
   if (!token) {
-    return res.status(403).json({ message: "Token is required" });
+    return res.status(401).json({ message: "Token is required" });
   }
 
-  // Decode the token
+  // Verify and decode the token
   jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
       console.error("Error decoding token:", err);
-      return res.status(403).json({ message: "Invalid or expired token" });
+      return res.status(401).json({ message: "Invalid or expired token" });
     }
 
-    console.log("Decoded token:", decoded); // Log the decoded token to check its contents
+    // Check if school_id exists in the decoded token
+    if (!decoded.school_id) {
+      return res.status(403).json({ message: "Token missing school_id" });
+    }
 
-    // Attach the decoded token to the request
-    req.user = decoded;  // Now `req.user` will have the decoded token, including the `school_id`
-    next(); // Proceed to the next middleware/route handler
+    console.log("Decoded token:", decoded); // Optional: log for debugging
+
+    // Attach the decoded data to the request object
+    req.user = decoded;
+
+    // Proceed to the next middleware/route handler
+    next();
   });
 };
+
 
 
 function authorizedRoles(allowedRoles) {
@@ -902,6 +912,20 @@ app.get("/read/:id", (req, res) => {
   });
 });
 
+app.get("/read-schools/:id", (req, res) => {
+  const schoolId = req.params.id;
+  const sql = 'SELECT * FROM schools WHERE school_id = ?';
+
+  db.query(sql, [schoolId], (err, result) => {
+    if (err) {
+      console.error('Error fetching school:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
 app.get("/staff-read/:id", (req, res) => {
   const sql = "SELECT * FROM staff WHERE staff_id = ?";
   const id = req.params.id;
@@ -976,6 +1000,24 @@ app.patch("/toggle-staff-status/:id", (req, res) => {
     }
 
     res.send({ message: `Staff ${isActive ? 'activated' : 'deactivated'} successfully` });
+  });
+});
+
+app.delete('/delete-school/:id', (req, res) => {
+  const schoolId = req.params.id;
+  const sql = 'DELETE FROM schools WHERE school_id = ?';
+
+  db.query(sql, [schoolId], (err, result) => {
+    if (err) {
+      console.error('Delete error:', err);
+      return res.status(500).json({ error: 'Failed to delete school' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'School not found' });
+    }
+
+    res.json({ message: 'School deleted successfully' });
   });
 });
 
