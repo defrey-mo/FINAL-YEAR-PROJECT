@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 
 
 export default function StaffView() {
-    const [data, setData] = useState([]);
-
+      const [data, setData] = useState([]);
     useEffect(() => {
         const token = localStorage.getItem("token"); // Get the JWT token from localStorage
     
@@ -32,7 +31,7 @@ export default function StaffView() {
           });
       }, []);
 
-
+    
   return (
     <>
          <p className="para">Staff List</p>
@@ -81,6 +80,8 @@ export default function StaffView() {
           )}
         </tbody>
       </table>
+
+      
     </>
   )
 }

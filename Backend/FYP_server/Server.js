@@ -353,6 +353,14 @@ app.post("/login", (req, res) => {
 
     const user = results[0]; // Retrieve user data with school_name from the join
 
+    // Check if the staff account is active
+    if (user.isActive === 0) {
+      return res.status(403).json({
+        status: "error",
+        message: "Your account is inactive. Please contact the administrator."
+      });
+    }
+
     try {
       // Compare provided password with hashed password in the database
       const isMatch = await bcrypt.compare(password, user.password);
@@ -366,11 +374,11 @@ app.post("/login", (req, res) => {
           staff_id: user.staff_id,
           username: user.username,
           role: user.role,
-          school_id: user.school_id, // Ensures restricted access
-          school_name: user.school_name // Add school_name from JOIN
+          school_id: user.school_id,
+          school_name: user.school_name
         },
         process.env.JWT_KEY,
-        { expiresIn: "2h" } // Token expires in 2 hours
+        { expiresIn: "2h" }
       );
 
       // Respond with token and basic user info
@@ -383,7 +391,7 @@ app.post("/login", (req, res) => {
           username: user.username,
           role: user.role,
           school_id: user.school_id,
-          school_name: user.school_name // Include school_name in the response
+          school_name: user.school_name
         }
       });
     } catch (error) {
@@ -882,6 +890,18 @@ app.get("/staff-reading/:id", (req, res) => {
     return res.json(result);
   });
 });
+
+app.get("/read/:id", (req, res) => {
+  const sql = `
+    SELECT * FROM students WHERE student_id = ?
+  `;
+  const id = req.params.id;
+  db.query(sql,[id], (err, result) => {
+    if (err) return res.json({ Message: "Error on server" });
+    return res.json(result);
+  });
+});
+
 app.get("/staff-read/:id", (req, res) => {
   const sql = "SELECT * FROM staff WHERE staff_id = ?";
   const id = req.params.id;
@@ -933,6 +953,29 @@ app.get('/students/ids', (req, res) => {
       }
       const ids = results.map(result => result.student_id);
       res.json(ids);
+  });
+});
+
+app.patch("/toggle-staff-status/:id", (req, res) => {
+  const staffId = req.params.id;
+  const { isActive } = req.body;
+
+  if (typeof isActive !== 'boolean') {
+    return res.status(400).send('Invalid "isActive" value. It must be true or false.');
+  }
+
+  const sql = 'UPDATE staff SET isActive = ? WHERE staff_id = ?';
+  db.query(sql, [isActive, staffId], (err, result) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('Server error');
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).send('Staff not found');
+    }
+
+    res.send({ message: `Staff ${isActive ? 'activated' : 'deactivated'} successfully` });
   });
 });
 

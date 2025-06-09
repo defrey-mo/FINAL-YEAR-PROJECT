@@ -75,7 +75,7 @@ export default function CheckStudent({ setActivePage }) {
       axios.request(requestConfiguration)
         .then(res => {
           console.log(res);
-          // navigate('/system/overview')
+          navigate('/system/overview')
         })  
         .catch(err => console.log(err));
     };

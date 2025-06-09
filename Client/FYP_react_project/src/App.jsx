@@ -14,7 +14,7 @@ import Status from "./pages/Status";
 import Incidents from "./pages/Incidents";
 import StaffManagement from "./pages/StaffManagement";
 import StudentReport from "./pages/StudentReport";
-import StaffView from "./pages/staffView";
+import StaffView from "./pages/StaffView";
 import StaffRead from "./pages/StaffRead";
 import StaffSetting from "./pages/StaffSetting";
 import Delete from "./pages/Delete";

@@ -49,7 +49,7 @@ export default function Login({ setIsAuthenticated }) {
           console.log("Navigating to dashboard...");
           navigate('/system/dashboard');
         } else {
-          navigate('/system/check-student');
+          navigate('/system/dashboard');
         }
       }
     } catch (err) {

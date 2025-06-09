@@ -36,11 +36,11 @@ export default function Sidebar({activePage}) {
           </div>
         </div>
         <ul className="sidebar-list">
-          {role === "Admin"&& (
+          
             <li className={(activePage === "dashboard")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="dashboard"><span className="material-icons-outlined">dashboard</span>Dashboard</Link>
           </li>
-          )}
+
           <li className={(activePage === "check-student")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="check-student"><span className="material-icons-outlined">tv</span>Check Student</Link>
           </li>

@@ -1,84 +1,143 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from 'react';
 import "../CSS/overview.css";
 import axios from "axios";
 import { Link } from 'react-router-dom';
 
-
 export default function Delete() {
     const [data, setData] = useState([]);
+    const [searchTerm, setSearchTerm] = useState(""); 
+    const [showModal1, setShowModal1] = useState(false);
+    const [staffToToggle, setStaffToToggle] = useState(null);
+    const [newStatus, setNewStatus] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token"); // Get the JWT token from localStorage
-    
+        fetchStaff();
+    }, []);
+
+    const fetchStaff = () => {
+        const token = localStorage.getItem("token");
+
         if (!token) {
-          console.error("No token found! User not authenticated.");
-          return;
+            console.error("No token found! User not authenticated.");
+            return;
         }
-    
-        // Make a GET request to fetch staff by passing the token in the Authorization header
+
         axios
-          .get("http://localhost:8084/staff-view", {
-            headers: {
-              Authorization: `Bearer ${token}`, // Send the token for authentication
-            },
-          })
-          .then((res) => setData(res.data))  // On success, update the `data` state with staff
-          .catch((err) => {
-            console.error("Error fetching staff:", err);
-            if (err.response && err.response.status === 401) {
-              // Handle unauthorized access
-              alert("You are not authorized to view this data. Please log in.");
-            }
-          });
-      }, []);
-
-
-  return (
-    <>
-         <p className="para">Staff List</p>
-      <table id="table">
-        <thead>
-          <tr>
-            <th>Staff ID</th>
-            <th>First Name</th>
-            <th>Middle Name</th>
-            <th>Surname</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>Role</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length > 0 ? (
-            data.map((staff, index) => {
-              return (
-                <tr key={index}>
-                  <td>{staff.staff_id}</td>
-                  <td>{staff.firstname}</td>
-                  <td>{staff.middlename}</td>
-                  <td>{staff.surname}</td>
-                  <td>{staff.phone}</td>
-                  <td style={{ textTransform: "none" }}>
-                    {staff.email}
-                  </td>
-                  <td>{staff.home_address}</td>
-                  <td>{staff.role}</td>
-                  <td>
-                      <button className="delete">Delete</button>
-                  </td>
-                </tr>
-              );
+            .get("http://localhost:8084/staff-view", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             })
-          ) : (
-            <tr>
-              <td colSpan="8">No students found for this school.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </>
-  )
-}
+            .then((res) => setData(res.data))
+            .catch((err) => {
+                console.error("Error fetching staff:", err);
+                if (err.response && err.response.status === 401) {
+                    alert("You are not authorized to view this data. Please log in.");
+                }
+            });
+    };
 
+    const toggleStaffStatus = (staffId, isActive, event) => {
+        event.stopPropagation();
+        setStaffToToggle(staffId);
+        setNewStatus(!isActive);
+        setShowModal1(true);
+    };
+
+    const confirmStatusToggle = () => {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            console.error("No token found! User not authenticated.");
+            return;
+        }
+
+        axios
+            .patch(`http://localhost:8084/toggle-staff-status/${staffToToggle}`, { isActive: newStatus }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then(() => {
+                fetchStaff();
+                setShowModal1(false);
+                setStaffToToggle(null);
+                setNewStatus(null);
+                alert(`Staff has been ${newStatus ? 'activated' : 'deactivated'} successfully.`);
+            })
+            .catch((err) => {
+                console.error("Error updating staff status", err);
+                alert("An error occurred while updating the staff status.");
+            });
+    };
+
+    const cancelToggle = () => {
+        setShowModal1(false);
+        setStaffToToggle(null);
+        setNewStatus(null);
+    };
+
+    return (
+        <>
+            <p className="para">Staff List</p>
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th>Staff ID</th>
+                        <th>First Name</th>
+                        <th>Middle Name</th>
+                        <th>Surname</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.length > 0 ? (
+                        data.map((staff, index) => (
+                            <tr key={index}>
+                                <td>{staff.staff_id}</td>
+                                <td>{staff.firstname}</td>
+                                <td>{staff.middlename}</td>
+                                <td>{staff.surname}</td>
+                                <td>{staff.phone}</td>
+                                <td style={{ textTransform: "none" }}>{staff.email}</td>
+                                <td>{staff.home_address}</td>
+                                <td>{staff.role}</td>
+                                <td>{staff.isActive ? 'Active' : 'Inactive'}</td>
+                                <td>
+                                    <button
+                                        className="delete"
+                                        onClick={(event) => toggleStaffStatus(staff.staff_id, staff.isActive, event)}
+                                    >
+                                        {staff.isActive ? 'Deactivate' : 'Activate'}
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="10">No staff found for this school.</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+
+            {showModal1 && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <p>Are you sure you want to {newStatus ? 'activate' : 'deactivate'} this staff member?</p>
+                        <div className="modal-buttons">
+                            <button onClick={confirmStatusToggle}>Yes, {newStatus ? 'Activate' : 'Deactivate'}</button>
+                            <button onClick={cancelToggle}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
