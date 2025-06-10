@@ -59,44 +59,46 @@ export default function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div>
-      <div className='app-name'><h1>Student's Misconduct And Behaviour System</h1></div>
-      <form onSubmit={handleLogin}>
-        <div className="login-box">
-          <div className="login-header">
-            
-            <header className='login-logo'><img src="school_logo.jpg" alt="School Logo" /></header>
-          </div>
-          <div className="input-box">
-            <input 
-              type="text" 
-              className="input-field" 
-              placeholder="Username" 
-              autoComplete="off" 
-              required 
-              name="username" 
-              value={values.username} 
-              onChange={handleChanges} 
-            />
-          </div>
-          <div className="input-box">
-            <input 
-              type="password" 
-              className="input-field" 
-              placeholder="Password" 
-              autoComplete="off" 
-              required 
-              name="password" 
-              value={values.password}
-              onChange={handleChanges} 
-            />
-          </div>
-          <div className="input-submit">
-            <button className="submit-btn" id="submit">Login</button>
-          </div>
+    <div class="login-page-container">
+  <div>
+    <div className='app-name'><h1>Student's Misconduct And Behaviour System</h1></div>
+    <form onSubmit={handleLogin}>
+      <div className="login-box">
+        <div className="login-header">
+
+          <header className='login-logo'><img src="school_logo.jpg" alt="School Logo" /></header>
         </div>
-      </form>
-    </div>
+        <div className="input-box">
+          <input
+            type="text"
+            className="input-field"
+            placeholder="Username"
+            autoComplete="off"
+            required
+            name="username"
+            value={values.username}
+            onChange={handleChanges}
+          />
+        </div>
+        <div className="input-box">
+          <input
+            type="password"
+            className="input-field"
+            placeholder="Password"
+            autoComplete="off"
+            required
+            name="password"
+            value={values.password}
+            onChange={handleChanges}
+          />
+        </div>
+        <div className="input-submit">
+          <button className="submit-btn" id="submit">Login</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
   );
 }
 

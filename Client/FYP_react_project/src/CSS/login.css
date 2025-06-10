@@ -1,105 +1,108 @@
-body{
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
-  justify-content: center;
+  justify-content: center; 
+  align-items: center; 
   min-height: 100vh;
-  background: #dfdfdf;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;;
-}
-.login-box{
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  width: 440px;
-  height: 480px;
-  padding: 30px;
-  margin-left: 50px;
+  /* background-color: #e0ffe0;  */
 }
 
-.login-header{
+
+.login-page-container {
+  background-color: #ffffff; 
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 400px; 
+  width: 90%;
   text-align: center;
-  margin: 20px 0 40px 0;
+ 
 }
-.login-header header{
-  color: #333;
-  font-size: 30px;
+
+
+.login-page-container *,
+.login-page-container *:before,
+.login-page-container *:after {
+  box-sizing: border-box;
+}
+
+/* Application Name styling */
+.login-page-container .app-name h1 {
+  color: #28a745; /* A pleasant shade of green */
+  margin-bottom: 30px;
+  font-size: 1.8em; /* Slightly larger for prominence */
   font-weight: 600;
 }
-.input-box .input-field{
-  width: 100%;
-  height: 60px;
-  font-size: 17px;
-  padding: 0 25px;
-  margin-bottom: 15px;
-  border-radius: 30px;
-  border: none;
-  box-shadow: 0px 5px 10px 1px rgba(0,0,0, 0.05);
-  outline: none;
-  transition: .3s;
-}
 
-.app-name{
-  background-color: green;
-  color: white;
-}
-
-.login-logo img{
-  height: 200px;
-  margin-left: 10px;
-}
-
-::placeholder{
-  font-weight: 500;
-  color: #222;
-}
-.input-field:focus{
-  width: 105%;
-}
-
-section{
+/* Login Box styling */
+.login-page-container .login-box {
   display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #555;
+  flex-direction: column;
+  gap: 20px; /* Space between input boxes */
 }
-#check{
-  margin-right: 10px;
+
+/* Login Header and Logo */
+.login-page-container .login-header {
+  margin-bottom: 20px;
 }
-a{
-  text-decoration: none;
+
+.login-page-container .login-logo img {
+  width: 100px; 
+  height: 100px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  border: 3px solid #28a745; 
 }
-a:hover{
-  text-decoration: underline;
+
+/* Input Box styling */
+.login-page-container .input-box {
+  position: relative; /* For potential icon placement or labels */
 }
-section a{
-  color: #555;
+
+.login-page-container .input-field {
+  width: 100%; 
+  padding: 12px 10px;
+  border: 1px solid #ced4da; 
+  border-radius: 8px; 
+  font-size: 1em;
+  transition: all 0.3s ease; 
 }
-.input-submit{
-  position: relative;
+
+.login-page-container .input-field::placeholder {
+  color: #6c757d; /* Lighter placeholder text */
 }
-.submit-btn{
-  width: 100%;
-  height: 60px;
-  background: green;
-  margin-left: 20px;
+
+.login-page-container .input-field:focus {
+  outline: none;
+  border-color: #28a745; /* Green border on focus */
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25); /* Subtle green glow on focus */
+}
+
+/* Submit Button styling */
+.login-page-container .input-submit {
+  margin-top: 20px;
+}
+
+.login-page-container .submit-btn {
+  background-color: #28a745; /* Solid green button */
+  color: #ffffff; /* White text */
+  padding: 12px 25px;
   border: none;
-  border-radius: 30px;
+  border-radius: 8px;
+  font-size: 1.1em;
   cursor: pointer;
-  transition: .3s;
-  color: #fff;
-  font-weight: bold;
-  font-size: large;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%; /* Full width button */
 }
-.input-submit label{
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  color: #fff;
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  cursor: pointer;
+
+.login-page-container .submit-btn:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: translateY(-2px); /* Slight lift effect */
 }
-.submit-btn:hover{
-  background: #000;
-  transform: scale(1.05,1);
+
+.login-page-container .submit-btn:active {
+  transform: translateY(0); /* Return to original position on click */
 }
