@@ -29,11 +29,11 @@ export default function AddStudent({ setActivePage }) {
     const [loading, setLoading] = useState(true); // State to manage loading state
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const navigate = useNavigate(); // Hook to navigate between routes
+    const navigate = useNavigate(); 
 
     useEffect(() => {
-        // Fetching existing student IDs from the backend when component mounts
         axios
             .get("http://localhost:8084/students/ids") // API endpoint to get student IDs
             .then((res) => {
@@ -45,10 +45,9 @@ export default function AddStudent({ setActivePage }) {
                 console.error("Error fetching student IDs:", err);
                 setLoading(false);
             });
-    }, []); // Empty dependency array means this effect runs only once
+    }, []);
 
     const generateUniqueStudentId = (existingIds) => {
-        // Function to generate a unique student ID
         let newId;
         let isUnique = false;
 
@@ -100,7 +99,7 @@ export default function AddStudent({ setActivePage }) {
         // Configuration for the axios POST request
         method: "post",
         maxBodyLength: Infinity,
-        url: "http://localhost:8084/students", // API endpoint to register new student
+        url: "http://localhost:8084/students",
         headers: {
             "content-type": "application/json",
             accept: "application/json",
@@ -143,10 +142,12 @@ export default function AddStudent({ setActivePage }) {
                     setShowSuccess(true);
                     setShowError(false);
                 })
-                .catch((err) => {                    
+                .catch((err) => {
+                    const msg = err.response?.data?.message || JSON.stringify(err.response?.data) || "An unexpected error occurred.";
+                    setErrorMessage(msg);                    
                     setShowError(true);
                     setShowSuccess(false);
-                    console.error("Error:", err.response?.data);
+                    console.error("Error:", msg);
                 });
         } catch (error) {
             // Handle errors during token decoding
@@ -344,7 +345,7 @@ export default function AddStudent({ setActivePage }) {
 
       {showError && (
         <ErrorBox
-          message="Registration failed! Please try again."
+          message={`Registration failed! Please try again.\n${errorMessage}`}
           onClose={() => setShowError(false)}
           duration={10000}
         />

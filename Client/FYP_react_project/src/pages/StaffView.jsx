@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import "../CSS/overview.css";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 export default function StaffView() {
       const [data, setData] = useState([]);
+      const navigate = useNavigate();
+
     useEffect(() => {
         const token = localStorage.getItem("token"); // Get the JWT token from localStorage
     
@@ -68,7 +70,7 @@ export default function StaffView() {
                     <Link to={`/system/staff/${staff.staff_id}`} className="read">
                       Read
                     </Link>
-                      <button className="update">Update</button>
+                      <button className="update" onClick={() => navigate(`/system/staff-update/${staff.staff_id}`)}>Update</button>
                   </td>
                 </tr>
               );

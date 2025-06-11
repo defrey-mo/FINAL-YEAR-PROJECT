@@ -19,6 +19,7 @@ export default function Dashboard({ setActivePage }) {
   const [negativeStudents, setNegativeStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
+
   useEffect(() => {
     const fetchNegativeConductStudents = async () => {
       try {
@@ -168,7 +169,7 @@ export default function Dashboard({ setActivePage }) {
         <div className="charts-card">
           <div className="header-row">
             <p>Negative incidents</p>
-            <div className="search-wrapper">
+            <div className="dashboard-search-wrapper">
               <input
                 type="text"
                 placeholder="Search..."

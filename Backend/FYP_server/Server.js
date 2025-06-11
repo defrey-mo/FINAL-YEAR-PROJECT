@@ -589,7 +589,7 @@ app.post("/students", verifyToken, (req, res) => {
   db.query(sql, values, (err, result) => {
     if (err) {
       console.error("Error inserting student:", err);
-      return res.status(500).json({ error: "Database error" });
+      return res.status(500).json({ error: "Student Number Exists" });
     }
     return res.status(201).json({ message: "Student created successfully", studentId: student_id });
   });
@@ -926,16 +926,6 @@ app.get("/read-schools/:id", (req, res) => {
   });
 });
 
-app.get("/staff-read/:id", (req, res) => {
-  const sql = "SELECT * FROM staff WHERE staff_id = ?";
-  const id = req.params.id;
-  db.query(sql,[id], (err, result) => {
-    if (err) return res.json({ Message: "Error on server" });
-    return res.json(result);
-  });
-});
-
-
 app.put("/update/:id", (req, res) => {
   const studentId = req.params.id; // Gets the ID from the URL parameters
 
@@ -966,6 +956,113 @@ app.put("/update/:id", (req, res) => {
     return res.json({ message: "Student updated successfully", result: result });
   })
 })
+
+app.get("/read-staff/:id", (req, res) => {
+  const id = req.params.id;
+
+  const sql = `SELECT * FROM staff WHERE staff_id = ?`;
+
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ Message: "Error on server" });
+
+    if (result.length === 0) {
+      return res.status(404).json({ Message: "Staff not found" });
+    }
+
+    return res.status(200).json(result[0]); // Assuming one result
+  });
+});
+
+app.put("/update-staff/:id", async (req, res) => {
+  try {
+    const staffId = req.params.id;
+    const {
+      firstname,
+      middlename,
+      surname,
+      nationality,
+      gender,
+      phone,
+      email,
+      home_address,
+      emergency_name,
+      emergency_phone,
+      emergency_email,
+      emergency_address,
+      username,
+      password,
+      role
+    } = req.body;
+
+    let hashedPassword = null;
+    if (password && password.trim() !== '') {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const sql = hashedPassword
+      ? `UPDATE staff SET
+          firstname = ?,
+          middlename = ?,
+          surname = ?,
+          nationality = ?,
+          gender = ?,
+          phone = ?,
+          email = ?,
+          home_address = ?,
+          emergency_name = ?,
+          emergency_phone = ?,
+          emergency_email = ?,
+          emergency_address = ?,
+          username = ?,
+          password = ?,
+          role = ?
+        WHERE staff_id = ?`
+      : `UPDATE staff SET
+          firstname = ?,
+          middlename = ?,
+          surname = ?,
+          nationality = ?,
+          gender = ?,
+          phone = ?,
+          email = ?,
+          home_address = ?,
+          emergency_name = ?,
+          emergency_phone = ?,
+          emergency_email = ?,
+          emergency_address = ?,
+          username = ?,
+          role = ?
+        WHERE staff_id = ?`;
+
+    const params = hashedPassword
+      ? [
+          firstname, middlename, surname, nationality, gender,
+          phone, email, home_address, emergency_name,
+          emergency_phone, emergency_email, emergency_address,
+          username, hashedPassword, role, staffId
+        ]
+      : [
+          firstname, middlename, surname, nationality, gender,
+          phone, email, home_address, emergency_name,
+          emergency_phone, emergency_email, emergency_address,
+          username, role, staffId
+        ];
+
+    db.query(sql, params, (err, result) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: err.message });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Staff not found" });
+      }
+      return res.json({ message: "Staff updated successfully", result });
+    });
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // api endpoint for fetching ids
 app.get('/students/ids', (req, res) => {
@@ -1018,6 +1115,24 @@ app.delete('/delete-school/:id', (req, res) => {
     }
 
     res.json({ message: 'School deleted successfully' });
+  });
+});
+
+app.delete('/staff-delete/:id', (req, res) => {
+  const staff_id = req.params.id;
+  const sql = 'DELETE FROM staff WHERE staff_id = ?';
+
+  db.query(sql, [staff_id], (err, result) => {
+    if (err) {
+      console.error('Delete error:', err);
+      return res.status(500).json({ error: 'Failed to delete staff' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Staff not found' });
+    }
+
+    res.json({ message: 'Staff deleted successfully' });
   });
 });
 

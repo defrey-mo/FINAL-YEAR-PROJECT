@@ -298,3 +298,20 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
+
+.dashboard-search-wrapper input{
+  margin-left: 100px;
+  margin-bottom: 10px;
+}
+
+.incident-header-row{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.incidents-page {
+  .search-wrapper{
+    margin-left: 200px;
+  }
+}

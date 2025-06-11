@@ -9,6 +9,7 @@ import OverView from "./pages/OverView";
 import Read from "./pages/Read";
 import CheckStudent from "./pages/CheckStudent";
 import Update from "./pages/Update";
+import StaffUpdating from "./pages/StaffUpdating"
 import Conduct from "./pages/Conduct";
 import Status from "./pages/Status";
 import Incidents from "./pages/Incidents";
@@ -60,6 +61,7 @@ const App = () => {
           <Route path="delete" element={<Delete/>} />
           <Route path="staff/:staff_id" element={<StaffRead />} />
           <Route path="staff-view" element={<StaffView />} />
+          <Route path="staff-update/:id" element={<StaffUpdating />} />
           <Route path="student-report" element={<StudentReport />} />
           <Route path="staff-reg" element={<StaffManagement />} />
           <Route path="status/:id" element={<Status setActivePage={setActivePage} />} />

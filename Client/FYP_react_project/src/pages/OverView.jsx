@@ -10,10 +10,15 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
 
   const [data, setData] = useState([]);
   const [role, setRole] = useState("");
-  const [searchTerm, setSearchTerm] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const [sortOption, setSortOption] = useState(""); // e.g. "firstname-asc"
+  const [showFilter, setShowFilter] = useState(false);
+
   const navigate = useNavigate();
+
+  const toggleFilter = () => setShowFilter((prev) => !prev);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,11 +52,48 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
       });
   }, []);
 
-  const filteredData = data.filter((student) =>
-    student.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.student_id.toString().includes(searchTerm)
+  // Filter data by search term
+  const filteredData = data.filter(
+    (student) =>
+      student.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.student_id.toString().includes(searchTerm)
   );
+
+  // Sort logic based on sortOption state
+ const sortedData = [...filteredData].sort((a, b) => {
+  switch (sortOption) {
+    case "student_id-asc":
+      return a.student_id.localeCompare(b.student_id);
+    case "student_id-desc":
+      return b.student_id.localeCompare(a.student_id);
+    case "firstname-asc":
+      return a.firstname.localeCompare(b.firstname);
+    case "firstname-desc":
+      return b.firstname.localeCompare(a.firstname);
+    case "middlename-asc":
+      return a.middlename.localeCompare(b.middlename);
+    case "middlename-desc":
+      return b.middlename.localeCompare(a.middlename);
+    case "surname-asc":
+      return a.surname.localeCompare(b.surname);
+    case "surname-desc":
+      return b.surname.localeCompare(a.surname);
+    case "created_at-desc":
+      return new Date(a.created_at) - new Date(b.created_at);
+    case "created_at-asc":
+      return new Date(b.created_at) - new Date(a.created_at);
+    default:
+      return 0;
+  }
+});
+
+
+
+  const handleSort = (field, order) => {
+  setSortOption(`${field}-${order}`);
+  setShowFilter(false);
+};
 
   const deleteStudent = (studentId, event) => {
     event.stopPropagation();
@@ -74,11 +116,10 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
         },
       })
       .then(() => {
-        // Update local data to reflect deletion
-        const updatedData = data.filter(student => student.student_id !== studentToDelete);
-        setData(updatedData);
-
-        // Close the modal and reset state
+        // Remove deleted student from data
+        setData((prevData) =>
+          prevData.filter((student) => student.student_id !== studentToDelete)
+        );
         setShowModal(false);
         setStudentToDelete(null);
         alert("Student deleted successfully");
@@ -95,7 +136,7 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
   };
 
   return (
-    <div>
+    <div className="overview">
       <div className="header-row">
         <p className="para">Students List</p>
         <div className="search-wrapper">
@@ -108,15 +149,33 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
           />
           <button className="search-icon-button">🔍</button>
         </div>
+        <div className="filter-dropdown">
+          <button className="filter-button" onClick={toggleFilter}>
+            Filter ⬇
+          </button>
+
+          {showFilter && (
+            <div className="filter-menu">
+              <button onClick={() => handleSort("student_id", "asc")}>Student ID ↑</button>
+              <button onClick={() => handleSort("student_id", "desc")}>Student ID ↓</button>
+              <button onClick={() => handleSort("firstname", "asc")}>First Name ↑</button>
+              <button onClick={() => handleSort("firstname", "desc")}>First Name ↓</button>
+              <button onClick={() => handleSort("surname", "asc")}>Surname ↑</button>
+              <button onClick={() => handleSort("surname", "desc")}>Surname ↓</button>
+              <button onClick={() => handleSort("created_at", "desc")}>Latest ↓</button>
+              <button onClick={() => handleSort("created_at", "asc")}>Earliest ↑</button>
+            </div>
+          )}
+        </div>
       </div>
 
       <table id="table">
         <thead>
           <tr>
             <th>Student ID</th>
+            <th>Surname</th>
             <th>First Name</th>
             <th>Middle Name</th>
-            <th>Surname</th>
             <th>Guardian Names</th>
             <th>Email</th>
             <th>Phone</th>
@@ -124,31 +183,40 @@ export default function OverView({ students, fetchStudents, setActivePage }) {
           </tr>
         </thead>
         <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((students, index) => (
+          {sortedData.length > 0 ? (
+            sortedData.map((student, index) => (
               <tr
                 key={index}
-                onClick={() => navigate(`/system/read/${students.student_id}`)}
+                onClick={() => navigate(`/system/read/${student.student_id}`)}
                 style={{ cursor: "pointer" }}
               >
-                <td>{students.student_id}</td>
-                <td>{students.firstname}</td>
-                <td>{students.middlename}</td>
-                <td>{students.surname}</td>
-                <td>{students.guardian_fullnames}</td>
-                <td style={{ textTransform: "none" }}>{students.guardian_email}</td>
-                <td>{students.guardian_phone}</td>
+                <td>{student.student_id}</td>
+                <td>{student.surname}</td>
+                <td>{student.firstname}</td>
+                <td>{student.middlename}</td>
+                <td>{student.guardian_fullnames}</td>
+                <td style={{ textTransform: "none" }}>{student.guardian_email}</td>
+                <td>{student.guardian_phone}</td>
                 <td>
                   <div className="dropdown" onClick={(e) => e.stopPropagation()}>
                     <button>Update</button>
                     <div className="dropdown-content">
-                      <Link to={`/system/update/${students.student_id}`} className="custom-link">Metadata</Link>
-                      <Link to={`/system/conduct/${students.student_id}`} className="custom-link">Conduct</Link>
-                      <Link to={`/system/status/${students.student_id}`} className="custom-link">Status</Link>
+                      <Link to={`/system/update/${student.student_id}`} className="custom-link">
+                        Metadata
+                      </Link>
+                      <Link to={`/system/conduct/${student.student_id}`} className="custom-link">
+                        Conduct
+                      </Link>
+                      <Link to={`/system/status/${student.student_id}`} className="custom-link">
+                        Status
+                      </Link>
                     </div>
                   </div>
                   {role === "Admin" && (
-                    <button className="delete" onClick={(event) => deleteStudent(students.student_id, event)}>
+                    <button
+                      className="delete"
+                      onClick={(event) => deleteStudent(student.student_id, event)}
+                    >
                       Delete
                     </button>
                   )}

@@ -1,3 +1,15 @@
+.overview{
+  
+.header-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 10px 0;
+  padding: 0 15px;
+}
+
+}
+
 table{
   width: 100%;
   text-align: left;
@@ -31,18 +43,12 @@ table, td {
   border-collapse: collapse; 
 }
 
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 10px 0;
-  padding: 0 15px;
-}
 
 .search-wrapper {
   display: flex;
   align-items: center;
   gap: 5px;
+  margin-left: 480px;
 }
 
 .search-box {
@@ -205,6 +211,7 @@ table, td {
   font-weight: bold;
 }
 
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -247,4 +254,55 @@ table, td {
 .modal-buttons button:last-child {
   background-color: #6c757d;
   color: white;
+}
+
+.filter-dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 1000;
+}
+
+.filter-button {
+  padding-left: 10px;
+  height: 30px;
+  font-size: 16px;        /* bigger text */
+  min-width: 120px;       /* minimum width */
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  background-color: #0056b3;
+}
+
+.filter-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+.filter-menu button {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-menu button:hover {
+  background-color: #f1f1f1;
 }

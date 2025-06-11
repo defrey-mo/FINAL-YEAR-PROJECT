@@ -6,6 +6,10 @@ export default function Incidents() {
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState(""); 
+  const [showFilter, setShowFilter] = useState(false);
+
+  const toggleFilter = () => setShowFilter((prev) => !prev);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -49,13 +53,48 @@ export default function Incidents() {
     student.student_id?.toString().includes(searchTerm)
   );
 
+  const sortedData = [...filteredData].sort((a, b) => {
+  switch (sortOption) {
+    case "student_id-asc":
+      return a.student_id.localeCompare(b.student_id);
+    case "student_id-desc":
+      return b.student_id.localeCompare(a.student_id);
+    case "firstname-asc":
+      return a.firstname.localeCompare(b.firstname);
+    case "firstname-desc":
+      return b.firstname.localeCompare(a.firstname);
+    case "middlename-asc":
+      return a.middlename.localeCompare(b.middlename);
+    case "middlename-desc":
+      return b.middlename.localeCompare(a.middlename);
+    case "surname-asc":
+      return a.surname.localeCompare(b.surname);
+    case "surname-desc":
+      return b.surname.localeCompare(a.surname);
+    case "created_at-desc":
+      return new Date(a.created_at) - new Date(b.created_at);
+    case "created_at-asc":
+      return new Date(b.created_at) - new Date(a.created_at);
+    default:
+      return 0;
+  }
+});
+
+
+
+  const handleSort = (field, order) => {
+  setSortOption(`${field}-${order}`);
+  setShowFilter(false);
+};
+
+
   if (loading) return <p>Loading student data...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <div className="header-row">
-        <p className="incidents">Student's List with Reported Incidents</p>
+    <div className='incidents-page'>
+      <div className="incident-header-row">
+        <p className="incidents">Students with Reported Incidents</p>
         <div className="search-wrapper">
           <input
             type="text"
@@ -65,6 +104,24 @@ export default function Incidents() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button className="search-icon-button">🔍</button>
+        </div>
+        <div className="filter-dropdown">
+          <button className="filter-button" onClick={toggleFilter}>
+            Filter ⬇
+          </button>
+
+          {showFilter && (
+            <div className="filter-menu">
+              <button onClick={() => handleSort("student_id", "asc")}>Student ID ↑</button>
+              <button onClick={() => handleSort("student_id", "desc")}>Student ID ↓</button>
+              <button onClick={() => handleSort("firstname", "asc")}>First Name ↑</button>
+              <button onClick={() => handleSort("firstname", "desc")}>First Name ↓</button>
+              <button onClick={() => handleSort("surname", "asc")}>Surname ↑</button>
+              <button onClick={() => handleSort("surname", "desc")}>Surname ↓</button>
+              <button onClick={() => handleSort("created_at", "desc")}>Latest ↓</button>
+              <button onClick={() => handleSort("created_at", "asc")}>Earliest ↑</button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -82,8 +139,8 @@ export default function Incidents() {
           </tr>
         </thead>
         <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((row, index) => (
+          {sortedData.length > 0 ? (
+            sortedData.map((row, index) => (
               <tr key={index}>
                 <td>{row.student_id}</td>
                 <td>{row.firstname}</td>
