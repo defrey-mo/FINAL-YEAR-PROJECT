@@ -19,6 +19,7 @@ import StaffView from "./pages/StaffView";
 import StaffRead from "./pages/StaffRead";
 import StaffSetting from "./pages/StaffSetting";
 import Delete from "./pages/Delete";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 
@@ -42,7 +43,7 @@ const App = () => {
       <Routes>
         {/* Login route */}
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-
+        <Route path="/forgotpassword" element={<ForgotPassword/>} />
         {/* Protected routes */}
         <Route
           path="/system"

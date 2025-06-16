@@ -3,9 +3,15 @@ import '../CSS/staff-mgt.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { decode } from 'js-base64';
 import axios from 'axios';
+import SuccessBox from "../components/SuccessBox"
+import ErrorBox from "../components/ErrorBox";
 
 export default function StaffManagement() {
   const { id } = useParams();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  
   const navigate = useNavigate();
 
   const [staff, setStaff] = useState({
@@ -24,7 +30,7 @@ export default function StaffManagement() {
     emergency_address: '',
     username: '',
     password: '',
-    role: 'admin'
+    role: 'Admin'
   });
 
   useEffect(() => {
@@ -42,7 +48,6 @@ export default function StaffManagement() {
     })
     .catch(err => {
       console.error('Fetch error:', err);
-      // optionally handle unauthorized here by redirecting to login
     });
   }, [id, navigate]);
 
@@ -78,10 +83,18 @@ export default function StaffManagement() {
       }
     })
     .then(res => {
+      setShowSuccess(true);
+      setShowError(false);
       console.log(res.data);
-      navigate("/system/staff-view");
     })
-    .catch(err => console.error("Update error:", err));
+    .catch(err => {
+      const msg = err.response?.data?.message || JSON.stringify(err.response?.data) || "An unexpected error occurred.";
+      setErrorMessage(msg);                    
+      setShowError(true);
+      setShowSuccess(false);
+      console.error("Error:", msg);
+      console.error("Update error:", err)
+    });
   };
 
   return (
@@ -195,7 +208,7 @@ export default function StaffManagement() {
                         name="role"
                         id="role"
                       >
-                        <option value="admin">Admin</option>
+                        <option value="Admin">Admin</option>
                         <option value="teacher">Teacher</option>
                       </select>
                     </span>
@@ -323,6 +336,21 @@ export default function StaffManagement() {
           </form>
         </div>
       </div>
+      {showSuccess && (
+              <SuccessBox
+                message="Staff updated successfully!"
+                onClose={() => setShowSuccess(false)}
+                onConfirm={() => navigate("/system/staff-view")}
+              />
+            )}
+      
+            {showError && (
+              <ErrorBox
+                message={`Updating failed! Please try again.\n${errorMessage}`}
+                onClose={() => setShowError(false)}
+                duration={10000}
+              />
+            )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ const SuccessBox = ({ message, onClose, onConfirm }) => {
       <div className="success-content">
         <FaCheckCircle className="success-icon" />
         <p>{message}</p>
-        <button onClick={onConfirm}>Go to Overview</button>
+        <button onClick={onConfirm}>Proceed</button>
         <button onClick={onClose}>Close</button>
       </div>
     </div>

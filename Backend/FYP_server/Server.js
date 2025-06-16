@@ -78,47 +78,6 @@ function authorizedRoles(allowedRoles) {
   };
 }
 
-// app.post("/report", (req, res) => {
-//   const { student_id } = req.body;
-
-//   if (!student_id) {
-//     return res.status(400).json({ message: "Student number is required" });
-//   }
-
-//   const sql = `
-//     SELECT s.*, st.*, c.*
-//     FROM students s
-//     LEFT JOIN status st ON s.student_id = st.student_id
-//     LEFT JOIN conduct c ON s.student_id = c.student_id
-//     WHERE s.student_id = ?
-//   `;
-
-//   db.query(sql, [student_id], (err, results) => {
-//     if (err) return res.status(500).json({ error: err.message });
-
-//     if (results.length === 0) {
-//       return res.status(404).json({ message: "Student not found" });
-//     }
-
-//     res.json(results);
-//   });
-// });
-
-// app.post("/report", (req, res) => {
-//   const { student_id } = req.body;
-
-//   if (!student_id) {
-//     return res.status(400).json({ message: "student_id is required" });
-//   }
-
-//   console.log(`Received student report for ID: ${student_id}`);
-
-//   // You could log it, trigger an action, or just respond
-//   return res.status(200).json({
-//     message: `Report received for student_id: ${student_id}`,
-//   });
-// });
-
 app.get("/active/:student_id", (req, res) => {
   const { student_id } = req.params;
 
@@ -294,44 +253,116 @@ app.post("/staffs", async (req, res) => {
   }
 });
 
-app.post("/new-staff",  verifyToken, async (req, res) => {
+app.post("/new-staff", verifyToken, (req, res) => {
   console.log('Incoming request body:', req.body);
 
-  const { staff_id, firstname, middlename, surname, nationality, gender, phone, email, home_address, emergency_name, emergency_phone, emergency_email, emergency_address, username, password, role } = req.body;
+  const {
+    staff_id, firstname, middlename, surname, nationality, gender, phone,
+    email, home_address, emergency_name, emergency_phone, emergency_email,
+    emergency_address, username, password, role
+  } = req.body;
 
-  const school_id = req.user?.school_id; // Get school_id from token
+  const school_id = req.user?.school_id; // From verifyToken middleware
 
-  // Validation checks
-  if (!staff_id || !firstname || !surname || !nationality || !gender || !school_id || !phone || !email || !home_address ||  !username || !password || !role) {
+  if (!staff_id || !firstname || !surname || !nationality || !gender || !school_id || !phone ||
+      !email || !home_address || !username || !password || !role) {
     return res.status(400).send({ message: "All fields must be filled" });
   }
 
-  try {
-    // Check if school exists
-    const school = await db.query("SELECT * FROM schools WHERE school_id = ?", [school_id]);
-    if (school.length === 0) {
+  // First check if the school exists
+  db.query("SELECT * FROM schools WHERE school_id = ?", [school_id], (err, schoolResults) => {
+    if (err) {
+      console.error("DB error checking school:", err);
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+
+    if (schoolResults.length === 0) {
       return res.status(400).send({ message: "School not found" });
     }
 
-    // Check if username is already taken
-    const userExists = await db.query("SELECT * FROM staff WHERE username = ?", [username]);
-    if (userExists.length > 0) {
-      return res.status(409).send({ message: "Username already taken" });
+    // Now check if username already exists
+    db.query("SELECT * FROM staff WHERE username = ?", [username], async (err, userResults) => {
+      if (err) {
+        console.error("DB error checking username:", err);
+        return res.status(500).send({ message: "Internal Server Error" });
+      }
+
+      if (userResults.length > 0) {
+        console.log("Username already taken:", username);
+        return res.status(409).send({ message: "Username already taken" });
+      }
+
+      // Username not taken, hash the password and insert
+      try {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const insertQuery = `INSERT INTO staff (
+          staff_id, firstname, middlename, surname, nationality, gender,
+          school_id, phone, email, home_address, emergency_name,
+          emergency_phone, emergency_email, emergency_address, username,
+          password, role
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        db.query(insertQuery, [
+          staff_id, firstname, middlename, surname, nationality, gender,
+          school_id, phone, email, home_address, emergency_name,
+          emergency_phone, emergency_email, emergency_address, username,
+          hashedPassword, role
+        ], (err, insertResult) => {
+          if (err) {
+            console.error("DB error inserting staff:", err);
+            return res.status(500).send({ message: "Internal Server Error" });
+          }
+
+          res.status(201).send({ message: "Staff created successfully" });
+        });
+      } catch (hashError) {
+        console.error("Password hashing error:", hashError);
+        return res.status(500).send({ message: "Internal Server Error" });
+      }
+    });
+  });
+});
+
+
+app.put("/update-password", (req, res) => {
+  const { username, newPassword } = req.body;
+
+  if (!username || !newPassword) {
+    return res.status(400).send({ message: "Username and new password are required." });
+  }
+
+  db.query("SELECT * FROM staff WHERE username = ?", [username], (err, results) => {
+    if (err) {
+      console.error("Error finding user:", err);
+      return res.status(500).send({ message: "Internal Server Error" });
     }
 
-    // Hash the password before saving to the database
+    if (results.length === 0) {
+      return res.status(404).send({ message: "Username not found." });
+    }
+
+    // User found, hash password
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Insert staff data with the hashed password
-    const query = "INSERT INTO staff (staff_id, firstname, middlename, surname, nationality, gender, school_id, phone, email, home_address, emergency_name, emergency_phone, emergency_email, emergency_address, username, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    await db.query(query, [staff_id, firstname, middlename, surname, nationality, gender, school_id, phone, email, home_address, emergency_name, emergency_phone, emergency_email, emergency_address, username, hashedPassword, role]);
+    bcrypt.hash(newPassword, saltRounds, (hashErr, hashedPassword) => {
+      if (hashErr) {
+        console.error("Error hashing password:", hashErr);
+        return res.status(500).send({ message: "Error hashing password" });
+      }
 
-    res.status(201).send({ message: "Staff created successfully" });
-  } catch (error) {
-    console.error("Error creating staff:", error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
+      // Update password
+      db.query("UPDATE staff SET password = ? WHERE username = ?", [hashedPassword, username], (updateErr) => {
+        if (updateErr) {
+          console.error("Error updating password:", updateErr);
+          return res.status(500).send({ message: "Error updating password" });
+        }
+
+        res.status(200).send({ message: "Password updated successfully." });
+      });
+    });
+  });
 });
 
 
@@ -973,6 +1004,23 @@ app.get("/read-staff/:id", (req, res) => {
   });
 });
 
+app.get("/staff-read/:id", (req, res) => {
+  const id = req.params.id;
+
+  const sql = `SELECT * FROM staff WHERE staff_id = ?`;
+
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ Message: "Error on server" });
+
+    if (result.length === 0) {
+      return res.status(404).json({ Message: "Staff not found" });
+    }
+
+    return res.status(200).json(result[0]); // Assuming one result
+  });
+});
+
+
 app.put("/update-staff/:id", async (req, res) => {
   try {
     const staffId = req.params.id;
@@ -1054,13 +1102,13 @@ app.put("/update-staff/:id", async (req, res) => {
         return res.status(500).json({ error: err.message });
       }
       if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Staff not found" });
+        return res.status(404).json({ message: "Staff not updated" });
       }
       return res.json({ message: "Staff updated successfully", result });
     });
   } catch (error) {
     console.error('Unexpected error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Password field empty' });
   }
 });
 

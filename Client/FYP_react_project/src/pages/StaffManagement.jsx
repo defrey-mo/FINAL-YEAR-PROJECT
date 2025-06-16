@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { decode } from 'js-base64';
 import axios from 'axios';
+import "../CSS/add.css";
+import SuccessBox from "../components/SuccessBox"
+import ErrorBox from "../components/ErrorBox";
 
 
 export default function StaffManagement() {
@@ -30,6 +33,10 @@ export default function StaffManagement() {
       const [password, setpassword] = useState("");
       const [role, setrole] = useState("Admin");
       const [schools, setSchools] = useState([]);
+      const [showSuccess, setShowSuccess] = useState(false);
+      const [showError, setShowError] = useState(false);
+      const [errorMessage, setErrorMessage] = useState('');
+      
 
        const navigate = useNavigate();
       
@@ -95,11 +102,16 @@ export default function StaffManagement() {
                   axios
                       .request(requestConfig)
                       .then((res) => {
-                          console.log(res);
-                          navigate("/system/staff-view"); // Redirect to overview page
+                        setShowSuccess(true);
+                        setShowError(false);
+                        console.log(res);
                       })
                       .catch((err) => {
-                          console.error("Error:", err.response.data);
+                        const msg = err.response?.data?.message || JSON.stringify(err.response?.data) || "An unexpected error occurred.";
+                        setErrorMessage(msg);                    
+                        setShowError(true);
+                        setShowSuccess(false);
+                        console.error("Error:", msg);
                       });
               } catch (error) {
                   // Handle errors during token decoding
@@ -116,7 +128,7 @@ export default function StaffManagement() {
       <div className="main-form">
         <h1>Staff Registration Form</h1>
         <div className="form">
-          <form autoComplete="off" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <section>
               <fieldset>
                 <legend>Personal Information</legend>
@@ -320,8 +332,22 @@ export default function StaffManagement() {
           </form>
         </div>
       </div>
-
     </div>
+    {showSuccess && (
+            <SuccessBox
+              message="Staff registered successfully!"
+              onClose={() => setShowSuccess(false)}
+              onConfirm={() => navigate("/system/staff-view")}
+            />
+          )}
+    
+          {showError && (
+            <ErrorBox
+              message={`Registration failed! Please try again.\n${errorMessage}`}
+              onClose={() => setShowError(false)}
+              duration={10000}
+            />
+          )}
    </>
   )
 }

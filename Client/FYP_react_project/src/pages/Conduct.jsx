@@ -66,10 +66,10 @@ export default function Conduct() {
 
   const negativeIncidents = [
     "Bullying",
-    "Disruptive Behaviour",
+    "Absenteeism",
     "Cheating Exams",
     "Inciting Strike",
-    "Rape",
+    "Drug abuse",
     "Homosexuallity"
   ];
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { decode } from "js-base64";
@@ -59,7 +59,7 @@ export default function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div class="login-page-container">
+    <div className="login-page-container">
   <div>
     <div className='app-name'><h1>Student's Misconduct And Behaviour System</h1></div>
     <form onSubmit={handleLogin}>
@@ -92,6 +92,7 @@ export default function Login({ setIsAuthenticated }) {
             onChange={handleChanges}
           />
         </div>
+        <p><Link to={`/forgotpassword`}>Forgot Password</Link></p>
         <div className="input-submit">
           <button className="submit-btn" id="submit">Login</button>
         </div>

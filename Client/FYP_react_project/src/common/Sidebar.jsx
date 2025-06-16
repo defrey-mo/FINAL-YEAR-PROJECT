@@ -41,16 +41,20 @@ export default function Sidebar({activePage}) {
             <Link to="dashboard"><span className="material-icons-outlined">dashboard</span>Dashboard</Link>
           </li>
 
-          <li className={(activePage === "check-student")?"sidebar-list-item active":"sidebar-list-item"}>
+          {role?.toLowerCase() === "admin" && (
+            <li className={(activePage === "check-student")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="check-student"><span className="material-icons-outlined">tv</span>Check Student</Link>
           </li>
-          <li className={(activePage === "add-student")?"sidebar-list-item active":"sidebar-list-item"}>
+          )}
+          {role?.toLowerCase() === "admin" && (
+            <li className={(activePage === "add-student")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="add-student"><span className="material-icons-outlined">group_add</span>Add Student</Link>
           </li>
+          )}
           <li className={(activePage === "overview")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="overview"><span className="material-icons-outlined">article</span>Overview</Link>
           </li>
-          {role === "Admin" && (
+          {role?.toLowerCase() === "admin" && (
             <li className={(activePage === "staff-setting")?"sidebar-list-item active":"sidebar-list-item"}>
             <Link to="staff-setting"><span className="material-icons-outlined">settings</span>Staff Management</Link>
           </li>
