@@ -7,31 +7,65 @@ Group members
 5.OGWAL THOMAS BALUKU 2023/DCS/EVE/0928
 6.NAKIRIMA JOAN 2023/DCS/EVE/1480
 
-STUDENT MISCONDUCT AND BEHAVIOUR SYSTEM
+# Students' Misconduct and Behaviour System
 
-Our project is to design, develop and implement a centralized system that will enable seamless sharing of students' conduct record 
-especially when students are moving from one school so that students with indiscipline issues can be accountable.
-The system will also help school administrators to make timely/informed decisions before admitting a student to the school.
-It will also help to keep the students discipline in check always which also promote discipline among students.
+The **Students' Misconduct and Behaviour System** is a web-based platform designed to assist schools in Uganda (and beyond) to efficiently manage and track student discipline records. 
+The system enables schools to log, retrieve, and monitor student conduct such as absenteeism, bullying, academic dishonesty, drug use, and other behavioral issues.
+
+The goal is to replace traditional, error-prone paper-based systems with a centralized and secure platform that supports accountability, improves data accuracy, and provides better communication between school staff and administrators.
 
 
-## 📂 Features of our project
-- Feature 1: Secure Login: Every school registered has a secure login that has promoted privacy in a way that information of school A cannot be seen by school B
+## 📋 Features
 
-- Feature 2: Students' Registration: The system also allows students to be registered with respective schools and uniquely assigning each student with a unique
-  learners identity number (LIN).
+- **Student Management**
+  - Register and manage student information.
+  - Track admission date, gender, school, and contact details.
 
-- Feature 3: Students conduct updating: This feature allows the updation of the students conduct which facilitates the real-time updating.
-  
-- Feature 4: Report generation: After checking the students by inputting the unique learners identity number (LIN) a report is generated to show all the students
-  record.
+- **Behaviour and Conduct Reporting**
+  - Record different types of misconduct against a student.
+  - Track behavioral incidents with categories, dates, and staff comments.
 
+- **Role-Based Access Control**
+  - Admins: Manage staff accounts and view all reports.
+  - Teachers: Add and manage conduct records.
+  - Registrars: View and verify students and misconduct details.
+
+- **School Isolation Logic**
+  - Each school only sees its own students.
+  - Ability to verify a student’s record from another school during transfers.
+
+- **Conduct and Status Reports**
+  - Generate student-wise reports including history of misconduct.
+  - View summary of behavioral trends per school.
+
+- **Authentication & Authorization**
+  - Login system secured with JWT.
+  - Passwords encrypted with bcrypt for security.
+
+- **API Integration**
+  - RESTful APIs used to connect the frontend and backend.
+  - Supports JSON-based data communication.
+
+---
 
 ## ⚙️ Technologies Used
-- Frontend: For the development of the frontend we used reactJS and css.
-- Backend: For the development of the backend we used Node.js, Express and MySQL
-- Database: Then the database is in MySQL
 
-## 🚀 Installation (for developers)
-Clone the project and install dependencies:
+### 💻 Backend
+- **Node.js** – JavaScript runtime
+- **Express.js** – Web server framework
+- **MySQL** – Relational database (via phpMyAdmin in XAMPP)
+- **JWT (jsonwebtoken)** – Secure authentication tokens
+- **bcrypt** – Password hashing
+
+### 🌐 Frontend
+- **React.js** – JavaScript library for the user interface
+- **Axios** – Handles HTTP requests
+- **React Router DOM** – For navigating between pages
+- **CSS** – Custom styling for user interface
+
+### 🛠️ Tools & Utilities
+- **XAMPP / phpMyAdmin** – For MySQL database management
+- **Thunder Client / Postman** – API testing
+- **Git & GitHub** – Version control and collaboration
+
 
