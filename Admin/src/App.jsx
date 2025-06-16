@@ -2,17 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Layout from "./common/Layout";
-import AddStudent from "./pages/AddStudent";
+import AddSchool from "./pages/AddSchool";
 import OverView from "./pages/OverView";
 import Read from "./pages/Read"
 import AddStaff from "./pages/AddStaff";
-import Update from "./pages/Update";
-import Conduct from "./pages/Conduct";
-import Status from "./pages/Status"
-import axios from "axios";
 
 const App = () => {
   const [activePage, setActivePage] = useState(null);
@@ -43,20 +38,8 @@ const App = () => {
             element={<AddStaff setActivePage={setActivePage} />}
           />
           <Route
-            path="add-student"
-            element={<AddStudent setActivePage={setActivePage} />}
-          />
-          <Route
-            path="conduct/:id"
-            element={<Conduct setActivePage={setActivePage} />}
-          />
-          <Route
-            path="update/:id"
-            element={<Update setActivePage={setActivePage} />}
-          />
-          <Route
-            path="status/:id"
-            element={<Status setActivePage={setActivePage} />}
+            path="add-school"
+            element={<AddSchool setActivePage={setActivePage} />}
           />
           <Route
             path="overview"

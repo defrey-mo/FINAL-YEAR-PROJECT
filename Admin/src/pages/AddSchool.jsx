@@ -5,7 +5,7 @@ import "../CSS/add.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export default function AddStudent({  setActivePage }) {
+export default function AddSchool({  setActivePage }) {
   setActivePage("add-student");
     
   
