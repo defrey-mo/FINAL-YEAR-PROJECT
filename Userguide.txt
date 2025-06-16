@@ -73,7 +73,7 @@ npm install
 npm start
 The frontend will run on: http://localhost:5174
 
-🔐 5. Login Credentials (Sample Data)
+5. Login Credentials (Sample Data)
 Use these sample login credentials to test different roles:
 
 - Registrar
