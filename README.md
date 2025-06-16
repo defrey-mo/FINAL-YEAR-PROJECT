@@ -15,7 +15,7 @@ The system enables schools to log, retrieve, and monitor student conduct such as
 The goal is to replace traditional, error-prone paper-based systems with a centralized and secure platform that supports accountability, improves data accuracy, and provides better communication between school staff and administrators.
 
 
-## 📋 Features
+## Features
 
 - **Student Management**
   - Register and manage student information.
@@ -48,22 +48,22 @@ The goal is to replace traditional, error-prone paper-based systems with a centr
 
 ---
 
-## ⚙️ Technologies Used
+## Technologies Used
 
-### 💻 Backend
+### Backend
 - **Node.js** – JavaScript runtime
 - **Express.js** – Web server framework
 - **MySQL** – Relational database (via phpMyAdmin in XAMPP)
 - **JWT (jsonwebtoken)** – Secure authentication tokens
 - **bcrypt** – Password hashing
 
-### 🌐 Frontend
+### Frontend
 - **React.js** – JavaScript library for the user interface
 - **Axios** – Handles HTTP requests
 - **React Router DOM** – For navigating between pages
 - **CSS** – Custom styling for user interface
 
-### 🛠️ Tools & Utilities
+### Tools & Utilities
 - **XAMPP / phpMyAdmin** – For MySQL database management
 - **Thunder Client / Postman** – API testing
 - **Git & GitHub** – Version control and collaboration
