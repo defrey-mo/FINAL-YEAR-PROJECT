@@ -107,6 +107,13 @@ Add students and misconduct reports.
 
 View and search student behavior reports.
 
+7. Contact Developer
+If you need assistance running or reviewing the project, please contact:
+
+Developer: Bwire Fredrick
+Email: [bwire.fredrick.19@gmail.com]
+Institution: Uganda Institute of Information and Communications Technology (UICT)
+
 
 ###You can either run the commands in the command prompt or the terminal in visual studio code and for you to be able to do this make sure that you have opened the code editor using the project folder.
 
