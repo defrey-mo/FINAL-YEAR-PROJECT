@@ -1,0 +1,113 @@
+ User Guide for Running the Student Misconduct and Behavior System.
+
+1. Project Overview
+The Student Misconduct and Behavior System is a full-stack web application that allows school administrators and staff to manage student behavior records digitally. It includes:
+
+A Node.js + Express backend with MySQL database.
+
+A React.js frontend for interacting with the system.
+
+JWT-based authentication and role-based access.
+
+This guide explains how to set up and run the project locally for demonstration and testing purposes.
+
+2. System Requirements
+To run the project locally, ensure you have the following installed:
+
+- Node.js (v16 or later)
+
+- XAMPP (with MySQL and phpMyAdmin)
+
+- Git
+
+- A modern browser (e.g., Chrome, Edge)
+
+- A code editor (e.g., VS Code – optional but recommended)
+
+3. Setup Instructions
+ A. Clone the Project
+Open terminal or Git Bash:
+
+git clone https://github.com/defrey-mo/FINAL-YEAR-PROJECT.git
+cd FINAL-YEAR-PROJECT
+ B. Set Up MySQL Database
+Open XAMPP and start Apache and MySQL.
+
+Open phpMyAdmin at: http://localhost/phpmyadmin
+
+Create a new database:
+Database Name: any_name_of_your_choice_db
+Import the SQL file:
+
+Click Import
+
+Choose the SQL file provided with the project (e.g., final_year_projectdb.sql)
+
+Click Go
+
+C. Backend Setup
+Open terminal or Git Bash:
+cd server
+npm install
+Create a file named .env inside the server folder:
+
+env
+Copy
+Edit
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=  # leave empty if no password
+DB_NAME=final_year_projectdb
+JWT_SECRET=secret_key
+Then start the server:
+Open terminal or Git Bash:
+
+node Server.js
+The server will run on: http://localhost:8084 (or another port, check console output)
+
+D. Frontend Setup
+Open another terminal:
+
+cd client
+npm install
+npm start
+The frontend will run on: http://localhost:5174
+
+🔐 5. Login Credentials (Sample Data)
+Use these sample login credentials to test different roles:
+
+- Registrar
+Username: defrey #admin
+
+Password: 123
+
+- Teacher
+Username: ainebyoona #teacher
+
+Password: 1234
+
+
+
+These users are already included in the SQL dump.
+
+6. How to Test the System
+Registrar/admin Role
+Log in with registrar/admin credentials.
+
+Add new staff members (teachers/registrars).
+
+View behavior records and school summary.
+
+Use the "verify student" page to check student history using student number.
+
+Teacher Role
+Log in with teacher credentials.
+
+Add students and misconduct reports.
+
+View and search student behavior reports.
+
+
+###You can either run the commands in the command prompt or the terminal in visual studio code and for you to be able to do this make sure that you have opened the code editor using the project folder.
+
+
