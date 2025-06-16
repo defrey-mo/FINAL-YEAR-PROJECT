@@ -17,9 +17,15 @@ It will also help to keep the students discipline in check always which also pro
 
 ## 📂 Features of our project
 - Feature 1: Secure Login: Every school registered has a secure login that has promoted privacy in a way that information of school A cannot be seen by school B
+
+- Feature 2: Students' Registration: The system also allows students to be registered with respective schools and uniquely assigning each student with a unique
+  learners identity number (LIN).
+
+- Feature 3: Students conduct updating: This feature allows the updation of the students conduct which facilitates the real-time updating.
   
-- Feature 2: Report generation: After checking the students by inputting the unique learners identity number (LIN) a report is generated to show all the students
+- Feature 4: Report generation: After checking the students by inputting the unique learners identity number (LIN) a report is generated to show all the students
   record.
+
 
 ## ⚙️ Technologies Used
 - Frontend: For the development of the frontend we used reactJS and css.
